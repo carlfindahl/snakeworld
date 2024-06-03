@@ -1,6 +1,7 @@
 #include <raylib.h>
 
 #include "snake.h"
+#include "resources.h"
 
 struct snake init_snake(uint32_t x, uint32_t y)
 {
@@ -55,6 +56,7 @@ void snake_update(struct snake *s)
         {
             --s->life;
             s->invulnerable = 4;
+            PlaySound(*resources_get_sound(SFE_PAIN));
         }
     }
 }
