@@ -1,0 +1,142 @@
+#include <raylib.h>
+#include <stdio.h>
+#include <stdint.h>
+
+#include "menu.h"
+#include "resources.h"
+
+uint32_t vec2(uint32_t x, uint32_t y)
+{
+    return x | (y << 16);
+}
+
+uint32_t vec2_x(uint32_t v)
+{
+    return v & 0xFFFF;
+}
+
+uint32_t vec2_y(uint32_t v)
+{
+    return v >> 16;
+}
+
+int main()
+{
+    InitWindow(600, 600, "Snake World");
+    SetTargetFPS(60);
+
+    struct snake s = init_snake(5, 8);
+    double time = 1.0;
+    int score = 0;
+    float delay_time = 0.16f;
+    float boost = 1.0f;
+
+    int apple = vec2(10, 10);
+
+    RenderTexture2D target = LoadRenderTexture(600, 600);
+    Shader shader = LoadShader(0, "post.fs");
+    Font font = LoadFont("res/VCR_FONT.ttf");
+
+    Texture2D sprite_sheet = LoadTexture("res/sprites.png");
+    Rectangle snake_head = (Rectangle){0, 0, 16, 16};
+    Rectangle snake_body = (Rectangle){16, 0, 16, 16};
+    Rectangle apple_sprite = (Rectangle){0, 16, 16, 16};
+    Rectangle heart_sprite = (Rectangle){16, 16, 16, 16};
+
+    while (!WindowShouldClose())
+    {
+        time -= GetFrameTime();
+
+        if (IsKeyPressed(KEY_R))
+        {
+            UnloadShader(shader);
+            shader = LoadShader(0, "post.fs");
+        }
+
+        // Direction change
+        if (IsKeyPressed(KEY_UP) && s.direction != DOWN)
+        {
+            s.direction = UP;
+        }
+        else if (IsKeyPressed(KEY_DOWN) && s.direction != UP)
+        {
+            s.direction = DOWN;
+        }
+        else if (IsKeyPressed(KEY_LEFT) && s.direction != RIGHT)
+        {
+            s.direction = LEFT;
+        }
+        else if (IsKeyPressed(KEY_RIGHT) && s.direction != LEFT)
+        {
+            s.direction = RIGHT;
+        }
+
+        if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
+        {
+            boost = 0.6;
+        }
+        else
+        {
+            boost = 1.0;
+        }
+
+        if (time < 0.0)
+        {
+            snake_update(&s);
+
+            if (s.positions[0] == apple)
+            {
+                apple = vec2(GetRandomValue(1, 28), GetRandomValue(1, 28));
+                snake_increment(&s);
+                ++score;
+            }
+
+            time = delay_time * boost;
+        }
+
+        // Render on to a texture
+        BeginTextureMode(target);
+        ClearBackground((Color){0, 25, 40, 255});
+        for (int i = 0; i < s.length; i++)
+        {
+            Color color = WHITE;
+            color.g = (s.invulnerable > 0) ? 0 : 255;
+            color.a = (s.invulnerable > 0) ? 100 : 255;
+
+            float t = 1.0 - (float)i / (float)s.length;
+            color.r = 150 + (255 - 150) * t;
+            color.g = 150 + (255 - 150) * t;
+            color.b = 150 + (255 - 150) * t;
+
+            Rectangle *rect = (i == 0) ? &snake_head : &snake_body;
+            DrawTexturePro(sprite_sheet, *rect, (Rectangle){snake_x(&s, i) * 20, snake_y(&s, i) * 20, 20, 20}, (Vector2){0, 0}, 0, color);
+        }
+
+        DrawTexturePro(sprite_sheet, apple_sprite, (Rectangle){vec2_x(apple) * 20, vec2_y(apple) * 20, 20, 20}, (Vector2){0, 0}, 0, WHITE);
+        DrawRectangleLinesEx((Rectangle){0, 0, 600, 600}, 5, DARKBLUE);
+
+        for (int i = 0; i < s.life; i++)
+        {
+            DrawTexturePro(sprite_sheet, heart_sprite, (Rectangle){10 + i * 36, 10, 24, 24}, (Vector2){0, 0}, 0, WHITE);
+        }
+
+        DrawTextEx(font, TextFormat("Score: %d", score), (Vector2){600 - 160, 10}, 24, 0.0, LIGHTGRAY);
+
+        EndTextureMode();
+
+        // Render post process on texture
+        BeginDrawing();
+        float time = GetTime();
+        BeginShaderMode(shader);
+        SetShaderValueV(shader, GetShaderLocation(shader, "time"), &time, SHADER_UNIFORM_FLOAT, 1);
+        DrawTextureRec(target.texture, (Rectangle){0, 0, 600, -600}, (Vector2){0, 0}, WHITE);
+        EndShaderMode();
+        EndDrawing();
+    }
+
+    UnloadFont(font);
+    UnloadTexture(sprite_sheet);
+    UnloadShader(shader);
+    UnloadRenderTexture(target);
+    return 0;
+}
