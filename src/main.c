@@ -26,10 +26,11 @@ int main()
     InitAudioDevice();
     SetTargetFPS(60);
 
-    Music theme = LoadMusicStream("res/snakeworld_theme.mp3");
+    Music theme = LoadMusicStream("res/snakeworld_theme.ogg");
     theme.looping = true;
+    PlayMusicStream(theme);
 
-    struct snake s = init_snake(5, 8);
+    struct snake s = init_snake(13, 15);
     double time = 1.0;
     int score = 0;
     float delay_time = 0.16f;
@@ -44,9 +45,10 @@ int main()
     resources_load();
     Texture2D *sprite_sheet = resources_get_sprite_sheet();
 
-    PlayMusicStream(theme);
     while (!WindowShouldClose())
     {
+        UpdateMusicStream(theme);
+
         time -= GetFrameTime();
 
         if (IsKeyPressed(KEY_R))

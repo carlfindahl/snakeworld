@@ -49,7 +49,8 @@ void snake_update(struct snake *s)
         if (snake_x(s, 0) < 0 || snake_x(s, 0) >= 30 || snake_y(s, 0) < 0 || snake_y(s, 0) >= 30)
         {
             damaged = true;
-            s->positions[0] = 5 | (5 << 16);
+            s->positions[0] = 13 | (15 << 16);
+            s->direction = RIGHT;
         }
 
         if (damaged)

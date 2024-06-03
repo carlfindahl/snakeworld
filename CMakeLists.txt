@@ -36,6 +36,7 @@ target_sources(snakeworld PRIVATE
     ${CMAKE_SOURCE_DIR}/src/main.c
     ${CMAKE_SOURCE_DIR}/src/snake.c
     ${CMAKE_SOURCE_DIR}/src/resources.c
+    ${CMAKE_SOURCE_DIR}/src/scenes/menu.c
 )
 
 target_link_libraries(snakeworld PRIVATE
