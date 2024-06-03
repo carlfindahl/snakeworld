@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "menu.h"
+#include "snake.h"
 #include "resources.h"
 
 uint32_t vec2(uint32_t x, uint32_t y)
@@ -23,6 +23,7 @@ uint32_t vec2_y(uint32_t v)
 int main()
 {
     InitWindow(600, 600, "Snake World");
+    InitAudioDevice();
     SetTargetFPS(60);
 
     struct snake s = init_snake(5, 8);
@@ -37,11 +38,8 @@ int main()
     Shader shader = LoadShader(0, "post.fs");
     Font font = LoadFont("res/VCR_FONT.ttf");
 
-    Texture2D sprite_sheet = LoadTexture("res/sprites.png");
-    Rectangle snake_head = (Rectangle){0, 0, 16, 16};
-    Rectangle snake_body = (Rectangle){16, 0, 16, 16};
-    Rectangle apple_sprite = (Rectangle){0, 16, 16, 16};
-    Rectangle heart_sprite = (Rectangle){16, 16, 16, 16};
+    resources_load();
+    Texture2D *sprite_sheet = resources_get_sprite_sheet();
 
     while (!WindowShouldClose())
     {
@@ -84,10 +82,12 @@ int main()
         {
             snake_update(&s);
 
+            // Eat apple
             if (s.positions[0] == apple)
             {
                 apple = vec2(GetRandomValue(1, 28), GetRandomValue(1, 28));
                 snake_increment(&s);
+                PlaySound(*resources_get_sound(SFE_EAT));
                 ++score;
             }
 
@@ -108,16 +108,16 @@ int main()
             color.g = 150 + (255 - 150) * t;
             color.b = 150 + (255 - 150) * t;
 
-            Rectangle *rect = (i == 0) ? &snake_head : &snake_body;
-            DrawTexturePro(sprite_sheet, *rect, (Rectangle){snake_x(&s, i) * 20, snake_y(&s, i) * 20, 20, 20}, (Vector2){0, 0}, 0, color);
+            Rectangle rect = resources_get_sprite_rect((i == 0) ? SR_SNAKE_HEAD : SR_SNAKE_BODY);
+            DrawTexturePro(*sprite_sheet, rect, (Rectangle){snake_x(&s, i) * 20, snake_y(&s, i) * 20, 20, 20}, (Vector2){0, 0}, 0, color);
         }
 
-        DrawTexturePro(sprite_sheet, apple_sprite, (Rectangle){vec2_x(apple) * 20, vec2_y(apple) * 20, 20, 20}, (Vector2){0, 0}, 0, WHITE);
+        DrawTexturePro(*sprite_sheet, resources_get_sprite_rect(SR_APPLE), (Rectangle){vec2_x(apple) * 20, vec2_y(apple) * 20, 20, 20}, (Vector2){0, 0}, 0, WHITE);
         DrawRectangleLinesEx((Rectangle){0, 0, 600, 600}, 5, DARKBLUE);
 
         for (int i = 0; i < s.life; i++)
         {
-            DrawTexturePro(sprite_sheet, heart_sprite, (Rectangle){10 + i * 36, 10, 24, 24}, (Vector2){0, 0}, 0, WHITE);
+            DrawTexturePro(*sprite_sheet, resources_get_sprite_rect(SR_HEART), (Rectangle){10 + i * 36, 10, 24, 24}, (Vector2){0, 0}, 0, WHITE);
         }
 
         DrawTextEx(font, TextFormat("Score: %d", score), (Vector2){600 - 160, 10}, 24, 0.0, LIGHTGRAY);
@@ -134,9 +134,13 @@ int main()
         EndDrawing();
     }
 
+    resources_unload();
+
     UnloadFont(font);
-    UnloadTexture(sprite_sheet);
     UnloadShader(shader);
     UnloadRenderTexture(target);
+
+    CloseAudioDevice();
+    CloseWindow();
     return 0;
 }

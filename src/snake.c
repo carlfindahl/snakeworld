@@ -1,6 +1,6 @@
 #include <raylib.h>
 
-#include "menu.h"
+#include "snake.h"
 
 struct snake init_snake(uint32_t x, uint32_t y)
 {

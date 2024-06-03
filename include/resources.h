@@ -32,6 +32,6 @@ Sound *resources_get_sound(enum SoundEffect se);
 Rectangle resources_get_sprite_rect(enum SpriteRect sr);
 
 /// Get a texture for the given resource
-Texture2D* resources_get_texture();
+Texture2D *resources_get_sprite_sheet();
 
 #endif
