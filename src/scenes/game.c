@@ -40,7 +40,7 @@ static void game_init()
     game_data->font = resources_get_font();
 }
 
-static void game_update()
+static enum SceneCommand game_update()
 {
     Snake *s = &game_data->snake;
 
@@ -78,6 +78,8 @@ static void game_update()
 
         game_data->tick_timer = game_data->delay_time;
     }
+
+    return SCENE_COMMAND_NONE;
 }
 
 static void game_draw()

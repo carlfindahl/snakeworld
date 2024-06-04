@@ -42,11 +42,30 @@ int main()
 
     resources_load();
 
-    while (!WindowShouldClose())
+    int keep_running = 1;
+    while (!WindowShouldClose() && keep_running)
     {
         UpdateMusicStream(theme);
 
-        scene_manager_update(&scene_manager);
+        enum SceneCommand command = scene_manager_update(&scene_manager);
+
+        switch (command)
+        {
+        case SCENE_COMMAND_QUIT:
+            keep_running = 0;
+            break;
+        case SCENE_COMMAND_PUSH_GAME:
+            scene_manager_push(&scene_manager, *get_scene_game());
+            break;
+        case SCENE_COMMAND_PUSH_MENU:
+            scene_manager_push(&scene_manager, *get_scene_menu());
+            break;
+        case SCENE_COMMAND_POP:
+            scene_manager_pop(&scene_manager);
+            break;
+        default:
+            break;
+        }
 
         if (IsKeyPressed(KEY_R))
         {
@@ -91,7 +110,7 @@ int main()
     }
 
     scene_manager_uninit(&scene_manager);
-    
+
     resources_unload();
 
     UnloadShader(shader);

@@ -3,6 +3,15 @@
 
 #define MAX_SCENES 10
 
+enum SceneCommand
+{
+    SCENE_COMMAND_NONE,
+    SCENE_COMMAND_QUIT,
+    SCENE_COMMAND_PUSH_GAME,
+    SCENE_COMMAND_PUSH_MENU,
+    SCENE_COMMAND_POP,
+};
+
 /**
  * Scene structure for the game
  */
@@ -10,7 +19,7 @@ typedef struct Scene
 {
     int initialized;
     void (*init)();
-    void (*update)();
+    enum SceneCommand (*update)();
     void (*draw)();
     void (*uninit)();
 } Scene;
@@ -21,21 +30,13 @@ typedef struct SceneManager
     int top;
 } SceneManager;
 
-enum SceneCommand
-{
-    SCENE_QUIT,
-    SCENE_PUSH_GAME,
-    SCENE_PUSH_MENU,
-    SCENE_POP,
-};
-
 SceneManager scene_manager_create();
 
 void scene_manager_push(SceneManager *sm, Scene s);
 
 void scene_manager_pop(SceneManager *sm);
 
-void scene_manager_update(SceneManager *sm);
+enum SceneCommand scene_manager_update(SceneManager *sm);
 
 void scene_manager_draw(SceneManager *sm);
 

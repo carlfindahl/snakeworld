@@ -30,7 +30,7 @@ static void menu_init()
     menu_data->title_texture = resources_get_sprite(TEXID_TITLE);
 }
 
-static void menu_update()
+static enum SceneCommand menu_update()
 {
     if (IsKeyPressed(KEY_UP))
     {
@@ -49,15 +49,19 @@ static void menu_update()
         {
         case 0:
             // Play
+            return SCENE_COMMAND_PUSH_GAME;
             break;
         case 1:
             // Credits
             break;
         case 2:
             // Exit
+            return SCENE_COMMAND_QUIT;
             break;
         }
     }
+
+    return SCENE_COMMAND_NONE;
 }
 
 static void menu_draw()
