@@ -90,12 +90,12 @@ int main()
         EndDrawing();
     }
 
+    scene_manager_uninit(&scene_manager);
+    
     resources_unload();
 
     UnloadShader(shader);
     UnloadRenderTexture(target);
-
-    scene_manager_uninit(&scene_manager);
 
     StopMusicStream(theme);
     UnloadMusicStream(theme);

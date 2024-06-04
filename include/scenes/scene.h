@@ -21,6 +21,14 @@ typedef struct SceneManager
     int top;
 } SceneManager;
 
+enum SceneCommand
+{
+    SCENE_QUIT,
+    SCENE_PUSH_GAME,
+    SCENE_PUSH_MENU,
+    SCENE_POP,
+};
+
 SceneManager scene_manager_create();
 
 void scene_manager_push(SceneManager *sm, Scene s);
