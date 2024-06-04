@@ -5,6 +5,12 @@
 #include "snake.h"
 #include "resources.h"
 
+enum PlayState {
+    PS_MENU,
+    PS_PLAYING,
+    PS_GAME_OVER,
+};
+
 uint32_t vec2(uint32_t x, uint32_t y)
 {
     return x | (y << 16);

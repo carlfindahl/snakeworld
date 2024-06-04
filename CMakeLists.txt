@@ -26,10 +26,14 @@ add_git_dependency(
     5.0
 )
 
+# Lua
+find_package(Lua REQUIRED)
+
 target_compile_features(snakeworld PRIVATE c_std_17)
 
 target_include_directories(snakeworld PRIVATE
     ${CMAKE_SOURCE_DIR}/include
+    ${LUA_INCLUDE_DIR}
 )
 
 target_sources(snakeworld PRIVATE
@@ -37,8 +41,11 @@ target_sources(snakeworld PRIVATE
     ${CMAKE_SOURCE_DIR}/src/snake.c
     ${CMAKE_SOURCE_DIR}/src/resources.c
     ${CMAKE_SOURCE_DIR}/src/scenes/menu.c
+    ${CMAKE_SOURCE_DIR}/src/scenes/game.c
+    ${CMAKE_SOURCE_DIR}/src/scenes/scene.c
 )
 
 target_link_libraries(snakeworld PRIVATE
     raylib
+    ${LUA_LIBRARIES}
 )
