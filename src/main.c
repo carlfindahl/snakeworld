@@ -16,8 +16,15 @@ enum PlayState
     PS_GAME_OVER,
 };
 
+// Size of each tile
+const int TILE_SIZE = 20;
+
+// Size of the render texture that is blitted to the full screen
+const int RENDER_SIZE = 600;
+
 int main()
 {
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(600, 600, "Snake World");
     InitAudioDevice();
     SetTargetFPS(60);
@@ -29,19 +36,11 @@ int main()
     SceneManager scene_manager = scene_manager_create();
     scene_manager_push(&scene_manager, *get_scene_menu());
 
-    Snake s = init_snake(13, 15, 3);
-    double time = 1.0;
-    int score = 0;
-    float delay_time = 0.16f;
-    float boost = 1.0f;
-
-    int apple = vec2(10, 10);
-
-    RenderTexture2D target = LoadRenderTexture(600, 600);
+    RenderTexture2D target = LoadRenderTexture(RENDER_SIZE, RENDER_SIZE);
+    SetTextureFilter(target.texture, TEXTURE_FILTER_POINT);
     Shader shader = LoadShader(0, "post.fs");
 
     resources_load();
-    Texture2D *sprite_sheet = resources_get_sprite(TEXID_SPRITES);
 
     while (!WindowShouldClose())
     {
@@ -54,12 +53,23 @@ int main()
             UnloadShader(shader);
             shader = LoadShader(0, "post.fs");
         }
-        else if (IsKeyPressed(KEY_P))
+
+        if (IsWindowResized())
         {
-            scene_manager_push(&scene_manager, *get_scene_game());
-        } else if (IsKeyPressed(KEY_M))
-        {
-            scene_manager_pop(&scene_manager);
+            int width = GetScreenWidth();
+            int height = GetScreenHeight();
+
+            if (!IsWindowFullscreen())
+            {
+                if (width > height)
+                {
+                    SetWindowSize(height, height);
+                }
+                else
+                {
+                    SetWindowSize(width, width);
+                }
+            }
         }
 
         // Render on to a texture
@@ -74,8 +84,9 @@ int main()
         float time = GetTime();
         BeginShaderMode(shader);
         SetShaderValueV(shader, GetShaderLocation(shader, "time"), &time, SHADER_UNIFORM_FLOAT, 1);
-        DrawTextureRec(target.texture, (Rectangle){0, 0, 600, -600}, (Vector2){0, 0}, WHITE);
+        DrawTexturePro(target.texture, (Rectangle){0, 0, RENDER_SIZE, -RENDER_SIZE}, (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()}, (Vector2){0, 0}, 0, WHITE);
         EndShaderMode();
+
         EndDrawing();
     }
 
