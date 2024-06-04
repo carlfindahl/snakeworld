@@ -39,6 +39,7 @@ target_include_directories(snakeworld PRIVATE
 target_sources(snakeworld PRIVATE
     ${CMAKE_SOURCE_DIR}/src/main.c
     ${CMAKE_SOURCE_DIR}/src/snake.c
+    ${CMAKE_SOURCE_DIR}/src/game_math.c
     ${CMAKE_SOURCE_DIR}/src/resources.c
     ${CMAKE_SOURCE_DIR}/src/scenes/menu.c
     ${CMAKE_SOURCE_DIR}/src/scenes/game.c

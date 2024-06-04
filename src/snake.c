@@ -2,6 +2,7 @@
 
 #include "snake.h"
 #include "resources.h"
+#include "game_math.h"
 
 struct snake init_snake(uint32_t x, uint32_t y)
 {
@@ -80,7 +81,7 @@ uint32_t snake_x(struct snake *s, uint32_t position)
         return 0;
     }
 
-    return s->positions[position] & 0xFFFF;
+    return vec2_x(s->positions[position]);
 }
 
 uint32_t snake_y(struct snake *s, uint32_t position)
@@ -90,5 +91,5 @@ uint32_t snake_y(struct snake *s, uint32_t position)
         return 0;
     }
 
-    return s->positions[position] >> 16;
+    return vec2_y(s->positions[position]);
 }
