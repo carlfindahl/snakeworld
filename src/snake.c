@@ -4,9 +4,9 @@
 #include "resources.h"
 #include "game_math.h"
 
-struct snake init_snake(uint32_t x, uint32_t y)
+Snake init_snake(uint32_t x, uint32_t y)
 {
-    struct snake s;
+    Snake s;
     s.length = 2;
     s.invulnerable = 0;
     s.life = 3;
@@ -16,7 +16,7 @@ struct snake init_snake(uint32_t x, uint32_t y)
     return s;
 }
 
-void snake_update(struct snake *s)
+void snake_update(Snake *s)
 {
     if (s->invulnerable > 0)
     {
@@ -63,18 +63,18 @@ void snake_update(struct snake *s)
     }
 }
 
-void snake_increment(struct snake *s)
+void snake_increment(Snake *s)
 {
     s->positions[s->length] = s->positions[s->length - 1];
     ++s->length;
 }
 
-void snake_decrement(struct snake *s)
+void snake_decrement(Snake *s)
 {
     --s->length;
 }
 
-uint32_t snake_x(struct snake *s, uint32_t position)
+uint32_t snake_x(Snake *s, uint32_t position)
 {
     if (position >= SNAKE_MAX_LENGTH)
     {
@@ -84,7 +84,7 @@ uint32_t snake_x(struct snake *s, uint32_t position)
     return vec2_x(s->positions[position]);
 }
 
-uint32_t snake_y(struct snake *s, uint32_t position)
+uint32_t snake_y(Snake *s, uint32_t position)
 {
     if (position >= SNAKE_MAX_LENGTH)
     {

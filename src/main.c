@@ -22,7 +22,7 @@ int main()
     theme.looping = true;
     PlayMusicStream(theme);
 
-    struct snake s = init_snake(13, 15);
+    Snake s = init_snake(13, 15);
     double time = 1.0;
     int score = 0;
     float delay_time = 0.16f;
