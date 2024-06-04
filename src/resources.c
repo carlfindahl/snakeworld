@@ -3,9 +3,10 @@
 #include <raylib.h>
 
 // Resource storage
-static Sound sounds[4];
-static Texture2D sprite_sheet;
-static Rectangle sprite_rects[4];
+static Sound sounds[SFE_COUNT];
+static Texture2D sprites[TEXID_COUNT];
+static Rectangle sprite_rects[SR_COUNT];
+static Font game_font;
 
 bool initialized = false;
 
@@ -18,7 +19,10 @@ void resources_load()
         sounds[SFE_NOTIFICATION] = LoadSound("res/notification.wav");
         sounds[SFE_PAIN] = LoadSound("res/pain.wav");
 
-        sprite_sheet = LoadTexture("res/sprites.png");
+        sprites[TEXID_SPRITES] = LoadTexture("res/sprites.png");
+        sprites[TEXID_TITLE] = LoadTexture("res/title.png");
+
+        game_font = LoadFont("res/VCR_FONT.ttf");
 
         sprite_rects[SR_SNAKE_HEAD] = (Rectangle){0, 0, 16, 16};
         sprite_rects[SR_SNAKE_BODY] = (Rectangle){16, 0, 16, 16};
@@ -39,21 +43,35 @@ Sound *resources_get_sound(enum SoundEffect se)
     return &sounds[se];
 }
 
-Rectangle resources_get_sprite_rect(enum SpriteRect sr) {
+Rectangle resources_get_sprite_rect(enum SpriteRect sr)
+{
     return sprite_rects[sr];
 }
 
-Texture2D* resources_get_sprite_sheet() {
-    return &sprite_sheet;
+Texture2D *resources_get_sprite(enum TextureId id)
+{
+    return &sprites[id];
+}
+
+Font *resources_get_font()
+{
+    return &game_font;
 }
 
 void resources_unload()
 {
     if (initialized)
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < SFE_COUNT; i++)
         {
             UnloadSound(sounds[i]);
         }
+
+        for (int i = 0; i < TEXID_COUNT; i++)
+        {
+            UnloadTexture(sprites[i]);
+        }
+
+        UnloadFont(game_font);
     }
 }

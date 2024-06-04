@@ -5,12 +5,15 @@
 #include "snake.h"
 #include "resources.h"
 #include "game_math.h"
+#include "scenes/scene.h"
 
 enum PlayState {
     PS_MENU,
     PS_PLAYING,
     PS_GAME_OVER,
 };
+
+Scene *get_scene_menu();
 
 int main()
 {
@@ -22,6 +25,9 @@ int main()
     theme.looping = true;
     PlayMusicStream(theme);
 
+    SceneManager scene_manager = scene_manager_create();
+    scene_manager_push(&scene_manager, *get_scene_menu());
+
     Snake s = init_snake(13, 15);
     double time = 1.0;
     int score = 0;
@@ -32,7 +38,6 @@ int main()
 
     RenderTexture2D target = LoadRenderTexture(600, 600);
     Shader shader = LoadShader(0, "post.fs");
-    Font font = LoadFont("res/VCR_FONT.ttf");
 
     resources_load();
     Texture2D *sprite_sheet = resources_get_sprite_sheet();
@@ -40,6 +45,9 @@ int main()
     while (!WindowShouldClose())
     {
         UpdateMusicStream(theme);
+
+        scene_manager_update(&scene_manager);
+        
 
         time -= GetFrameTime();
 
@@ -95,6 +103,9 @@ int main()
         // Render on to a texture
         BeginTextureMode(target);
         ClearBackground((Color){0, 25, 40, 255});
+        
+        scene_manager_draw(&scene_manager);
+        
         for (int i = 0; i < s.length; i++)
         {
             Color color = WHITE;
@@ -118,7 +129,7 @@ int main()
             DrawTexturePro(*sprite_sheet, resources_get_sprite_rect(SR_HEART), (Rectangle){10 + i * 36, 10, 24, 24}, (Vector2){0, 0}, 0, WHITE);
         }
 
-        DrawTextEx(font, TextFormat("Score: %d", score), (Vector2){600 - 160, 10}, 24, 0.0, LIGHTGRAY);
+        // DrawTextEx(font, TextFormat("Score: %d", score), (Vector2){600 - 160, 10}, 24, 0.0, LIGHTGRAY);
 
         EndTextureMode();
 
@@ -134,9 +145,10 @@ int main()
 
     resources_unload();
 
-    UnloadFont(font);
     UnloadShader(shader);
     UnloadRenderTexture(target);
+
+    scene_manager_uninit(&scene_manager);
 
     StopMusicStream(theme);
     UnloadMusicStream(theme);

@@ -1,12 +1,8 @@
 #ifndef H_MENU_H
 #define H_MENU_H
 
-void menu_init();
+#include "scenes/scene.h"
 
-void menu_update();
-
-void menu_render();
-
-void menu_uninit();
+Scene *get_scene_menu();
 
 #endif
