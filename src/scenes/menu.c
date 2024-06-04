@@ -67,9 +67,9 @@ static enum SceneCommand menu_update()
 static void menu_draw()
 {
     double time = GetTime();
-    for (int i = 0; i < 5; i++)
+    for (int i = 5; i >=0; i--)
     {
-        Color color = WHITE;
+        Color color = i == 0 ? WHITE : YELLOW;
         color.a = i == 0 ? 255 : 25;
         DrawTextureEx(*menu_data->title_texture, (Vector2){300 - menu_data->title_texture->width, 75 + (sin(i * 10 + time) * 10)}, 0.0, 2.0, color);
     }

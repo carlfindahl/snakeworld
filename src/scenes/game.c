@@ -8,10 +8,14 @@
 #include <stdint.h>
 
 #include <raylib.h>
+#include <lauxlib.h>
+#include <lua.h>
 
 #define INITIAL_SNAKE_LENGTH 3
 #define INITIAL_TICK_TIME 1.0f
-#define BASE_GAME_SPEED 0.3f
+#define BASE_GAME_SPEED 0.2f
+
+static lua_State *lua = NULL;
 
 typedef struct GameData
 {
@@ -29,6 +33,8 @@ static GameData *game_data = NULL;
 
 static void game_init()
 {
+    lua = luaL_newstate();
+
     game_data = malloc(sizeof(GameData));
     game_data->apple = vec2(10, 10);
     game_data->snake = init_snake(13, 15, INITIAL_SNAKE_LENGTH);
@@ -79,6 +85,11 @@ static enum SceneCommand game_update()
         game_data->tick_timer = game_data->delay_time;
     }
 
+    if (s->life <= 0)
+    {
+        return SCENE_COMMAND_PUSH_GAME_OVER;
+    }
+
     return SCENE_COMMAND_NONE;
 }
 
@@ -119,6 +130,8 @@ static void game_uninit()
 {
     free(game_data);
     game_data = NULL;
+
+    lua_close(lua);
 }
 
 static Scene game_scene = {

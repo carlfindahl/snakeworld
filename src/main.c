@@ -6,6 +6,7 @@
 #include "resources.h"
 #include "game_math.h"
 #include "scenes/scene.h"
+#include "scenes/end_game.h"
 #include "scenes/game.h"
 #include "scenes/menu.h"
 
@@ -60,6 +61,10 @@ int main()
         case SCENE_COMMAND_PUSH_MENU:
             scene_manager_push(&scene_manager, *get_scene_menu());
             break;
+        case SCENE_COMMAND_PUSH_GAME_OVER:
+            scene_manager_pop(&scene_manager);
+            scene_manager_push(&scene_manager, *get_scene_end_game());
+            break;
         case SCENE_COMMAND_POP:
             scene_manager_pop(&scene_manager);
             break;
@@ -67,6 +72,7 @@ int main()
             break;
         }
 
+        // Debug keys
         if (IsKeyPressed(KEY_R))
         {
             UnloadShader(shader);
@@ -103,7 +109,7 @@ int main()
         float time = GetTime();
         BeginShaderMode(shader);
         SetShaderValueV(shader, GetShaderLocation(shader, "time"), &time, SHADER_UNIFORM_FLOAT, 1);
-        DrawTexturePro(target.texture, (Rectangle){0, 0, RENDER_SIZE, -RENDER_SIZE}, (Rectangle){0, 0, GetScreenWidth(), GetScreenHeight()}, (Vector2){0, 0}, 0, WHITE);
+        DrawTexturePro(target.texture, (Rectangle){0, 0, RENDER_SIZE, -RENDER_SIZE}, (Rectangle){0.0, 0, GetScreenWidth(), GetScreenHeight()}, (Vector2){0, 0}, 0, RED);
         EndShaderMode();
 
         EndDrawing();
