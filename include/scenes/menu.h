@@ -1,8 +1,8 @@
 #ifndef H_MENU_H
 #define H_MENU_H
 
-#include "scenes/scene.h"
+struct Scene;
 
-Scene *get_scene_menu();
+struct Scene *get_scene_menu();
 
 #endif

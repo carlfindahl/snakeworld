@@ -6,14 +6,15 @@
 #include "resources.h"
 #include "game_math.h"
 #include "scenes/scene.h"
+#include "scenes/game.h"
+#include "scenes/menu.h"
 
-enum PlayState {
+enum PlayState
+{
     PS_MENU,
     PS_PLAYING,
     PS_GAME_OVER,
 };
-
-Scene *get_scene_menu();
 
 int main()
 {
@@ -28,7 +29,7 @@ int main()
     SceneManager scene_manager = scene_manager_create();
     scene_manager_push(&scene_manager, *get_scene_menu());
 
-    Snake s = init_snake(13, 15);
+    Snake s = init_snake(13, 15, 3);
     double time = 1.0;
     int score = 0;
     float delay_time = 0.16f;
@@ -40,97 +41,32 @@ int main()
     Shader shader = LoadShader(0, "post.fs");
 
     resources_load();
-    Texture2D *sprite_sheet = resources_get_sprite_sheet();
+    Texture2D *sprite_sheet = resources_get_sprite(TEXID_SPRITES);
 
     while (!WindowShouldClose())
     {
         UpdateMusicStream(theme);
 
         scene_manager_update(&scene_manager);
-        
-
-        time -= GetFrameTime();
 
         if (IsKeyPressed(KEY_R))
         {
             UnloadShader(shader);
             shader = LoadShader(0, "post.fs");
         }
-
-        // Direction change
-        if (IsKeyPressed(KEY_UP) && s.direction != DOWN)
+        else if (IsKeyPressed(KEY_P))
         {
-            s.direction = UP;
-        }
-        else if (IsKeyPressed(KEY_DOWN) && s.direction != UP)
+            scene_manager_push(&scene_manager, *get_scene_game());
+        } else if (IsKeyPressed(KEY_M))
         {
-            s.direction = DOWN;
-        }
-        else if (IsKeyPressed(KEY_LEFT) && s.direction != RIGHT)
-        {
-            s.direction = LEFT;
-        }
-        else if (IsKeyPressed(KEY_RIGHT) && s.direction != LEFT)
-        {
-            s.direction = RIGHT;
-        }
-
-        if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT))
-        {
-            boost = 0.6;
-        }
-        else
-        {
-            boost = 1.0;
-        }
-
-        if (time < 0.0)
-        {
-            snake_update(&s);
-
-            // Eat apple
-            if (s.positions[0] == apple)
-            {
-                apple = vec2(GetRandomValue(1, 28), GetRandomValue(1, 28));
-                snake_increment(&s);
-                PlaySound(*resources_get_sound(SFE_EAT));
-                ++score;
-            }
-
-            time = delay_time * boost;
+            scene_manager_pop(&scene_manager);
         }
 
         // Render on to a texture
         BeginTextureMode(target);
         ClearBackground((Color){0, 25, 40, 255});
-        
         scene_manager_draw(&scene_manager);
-        
-        for (int i = 0; i < s.length; i++)
-        {
-            Color color = WHITE;
-            color.g = (s.invulnerable > 0) ? 0 : 255;
-            color.a = (s.invulnerable > 0) ? 100 : 255;
-
-            float t = 1.0 - (float)i / (float)s.length;
-            color.r = 150 + (255 - 150) * t;
-            color.g = 150 + (255 - 150) * t;
-            color.b = 150 + (255 - 150) * t;
-
-            Rectangle rect = resources_get_sprite_rect((i == 0) ? SR_SNAKE_HEAD : SR_SNAKE_BODY);
-            DrawTexturePro(*sprite_sheet, rect, (Rectangle){snake_x(&s, i) * 20, snake_y(&s, i) * 20, 20, 20}, (Vector2){0, 0}, 0, color);
-        }
-
-        DrawTexturePro(*sprite_sheet, resources_get_sprite_rect(SR_APPLE), (Rectangle){vec2_x(apple) * 20, vec2_y(apple) * 20, 20, 20}, (Vector2){0, 0}, 0, WHITE);
         DrawRectangleLinesEx((Rectangle){0, 0, 600, 600}, 5, DARKBLUE);
-
-        for (int i = 0; i < s.life; i++)
-        {
-            DrawTexturePro(*sprite_sheet, resources_get_sprite_rect(SR_HEART), (Rectangle){10 + i * 36, 10, 24, 24}, (Vector2){0, 0}, 0, WHITE);
-        }
-
-        // DrawTextEx(font, TextFormat("Score: %d", score), (Vector2){600 - 160, 10}, 24, 0.0, LIGHTGRAY);
-
         EndTextureMode();
 
         // Render post process on texture

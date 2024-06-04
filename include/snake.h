@@ -1,5 +1,5 @@
-#ifndef H_MENU_H
-#define H_MENU_H
+#ifndef H_SNAKE_H
+#define H_SNAKE_H
 
 #include <stdint.h>
 #include <stdio.h>
@@ -25,7 +25,7 @@ typedef struct Snake
 } Snake;
 
 // Initialize a snake at the given position
-Snake init_snake(uint32_t x, uint32_t y);
+Snake init_snake(uint32_t x, uint32_t y, uint32_t base_length);
 
 // Update the snake's position
 void snake_update(Snake *s);

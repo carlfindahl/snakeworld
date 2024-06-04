@@ -4,10 +4,10 @@
 #include "resources.h"
 #include "game_math.h"
 
-Snake init_snake(uint32_t x, uint32_t y)
+Snake init_snake(uint32_t x, uint32_t y, uint32_t base_length)
 {
     Snake s;
-    s.length = 2;
+    s.length = base_length;
     s.invulnerable = 0;
     s.life = 3;
     s.positions[0] = x | (y << 16);
