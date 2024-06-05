@@ -18,6 +18,8 @@ enum SpriteRect
     SR_SNAKE_BODY,
     SR_APPLE,
     SR_HEART,
+    SR_EMPTY_HEART,
+    SR_TOMBSTONE,
     SR_COUNT,
 };
 

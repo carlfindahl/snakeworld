@@ -7,10 +7,12 @@
 #include <raylib.h>
 
 static Font *font = NULL;
+static Texture2D* sprite_sheet = NULL;
 
 void scene_end_game_init()
 {
     font = resources_get_font();
+    sprite_sheet = resources_get_sprite(TEXID_SPRITES);
 }
 
 enum SceneCommand scene_end_game_update()
@@ -30,6 +32,8 @@ void scene_end_game_draw()
 
     text_size = MeasureTextEx(*font, "Press Enter to return to the main menu", 20, 0);
     DrawTextEx(*font, "Press Enter to return to the main menu", (Vector2){300 - text_size.x / 2.0, 250}, 20, 0, WHITE);
+
+    DrawTexturePro(*sprite_sheet, resources_get_sprite_rect(SR_TOMBSTONE), (Rectangle){250.0, 400.0, 100.0, 100.0}, (Vector2){0.0, 0.0}, 0.0, WHITE);
 }
 
 void scene_end_game_uninit()

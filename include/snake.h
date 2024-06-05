@@ -22,6 +22,7 @@ typedef struct Snake
     int invulnerable;
     uint32_t positions[SNAKE_MAX_LENGTH];
     enum Direction direction;
+    enum Direction previous_direction;
 } Snake;
 
 // Initialize a snake at the given position

@@ -48,14 +48,12 @@ static enum SceneCommand menu_update()
         switch (menu_data->selected_menu_option)
         {
         case 0:
-            // Play
             return SCENE_COMMAND_PUSH_GAME;
             break;
         case 1:
-            // Credits
+            return SCENE_COMMAND_PUSH_CREDITS;
             break;
         case 2:
-            // Exit
             return SCENE_COMMAND_QUIT;
             break;
         }
@@ -67,7 +65,7 @@ static enum SceneCommand menu_update()
 static void menu_draw()
 {
     double time = GetTime();
-    for (int i = 5; i >=0; i--)
+    for (int i = 5; i >= 0; i--)
     {
         Color color = i == 0 ? WHITE : YELLOW;
         color.a = i == 0 ? 255 : 25;

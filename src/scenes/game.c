@@ -8,14 +8,11 @@
 #include <stdint.h>
 
 #include <raylib.h>
-#include <lauxlib.h>
-#include <lua.h>
 
 #define INITIAL_SNAKE_LENGTH 3
 #define INITIAL_TICK_TIME 1.0f
 #define BASE_GAME_SPEED 0.2f
-
-static lua_State *lua = NULL;
+#define MAX_LIFE 4
 
 typedef struct GameData
 {
@@ -24,6 +21,7 @@ typedef struct GameData
     float delay_time;
     float boost;
     int score;
+    int tick_count;
     uint32_t apple;
     Texture2D *sprite_sheet;
     Font *font;
@@ -33,12 +31,11 @@ static GameData *game_data = NULL;
 
 static void game_init()
 {
-    lua = luaL_newstate();
-
     game_data = malloc(sizeof(GameData));
     game_data->apple = vec2(10, 10);
     game_data->snake = init_snake(13, 15, INITIAL_SNAKE_LENGTH);
     game_data->score = 0;
+    game_data->tick_count = 0;
     game_data->boost = 1.0f;
     game_data->tick_timer = INITIAL_TICK_TIME;
     game_data->delay_time = BASE_GAME_SPEED;
@@ -51,19 +48,19 @@ static enum SceneCommand game_update()
     Snake *s = &game_data->snake;
 
     // Direction change
-    if (IsKeyPressed(KEY_UP) && s->direction != DOWN)
+    if (IsKeyPressed(KEY_UP) && s->previous_direction != DOWN)
     {
         s->direction = UP;
     }
-    else if (IsKeyPressed(KEY_DOWN) && s->direction != UP)
+    else if (IsKeyPressed(KEY_DOWN) && s->previous_direction != UP)
     {
         s->direction = DOWN;
     }
-    else if (IsKeyPressed(KEY_LEFT) && s->direction != RIGHT)
+    else if (IsKeyPressed(KEY_LEFT) && s->previous_direction != RIGHT)
     {
         s->direction = LEFT;
     }
-    else if (IsKeyPressed(KEY_RIGHT) && s->direction != LEFT)
+    else if (IsKeyPressed(KEY_RIGHT) && s->previous_direction != LEFT)
     {
         s->direction = RIGHT;
     }
@@ -71,7 +68,9 @@ static enum SceneCommand game_update()
     game_data->tick_timer -= GetFrameTime();
     if (game_data->tick_timer < 0.0)
     {
+        s->previous_direction = s->direction;
         snake_update(s);
+        game_data->tick_count++;
 
         // Eat apple
         if (s->positions[0] == game_data->apple)
@@ -80,9 +79,19 @@ static enum SceneCommand game_update()
             snake_increment(s);
             PlaySound(*resources_get_sound(SFE_EAT));
             ++game_data->score;
+
+            if (game_data->score % 5 == 0)
+            {
+                game_data->boost += 0.1;
+
+                if (s->life < MAX_LIFE)
+                {
+                    s->life++;
+                }
+            }
         }
 
-        game_data->tick_timer = game_data->delay_time;
+        game_data->tick_timer = game_data->delay_time / game_data->boost;
     }
 
     if (s->life <= 0)
@@ -117,21 +126,34 @@ static void game_draw()
     DrawTexturePro(*game_data->sprite_sheet, resources_get_sprite_rect(SR_APPLE), (Rectangle){vec2_x(game_data->apple) * 20, vec2_y(game_data->apple) * 20, 20, 20}, (Vector2){0, 0}, 0, WHITE);
 
     // Draw Hearts / Life
-    for (int i = 0; i < s->life; i++)
+    for (int i = 0; i < MAX_LIFE; i++)
     {
-        DrawTexturePro(*game_data->sprite_sheet, resources_get_sprite_rect(SR_HEART), (Rectangle){10 + i * 36, 10, 24, 24}, (Vector2){0, 0}, 0, WHITE);
+        enum SpriteRect texture = (i < s->life) ? SR_HEART : SR_EMPTY_HEART;
+        DrawTexturePro(*game_data->sprite_sheet, resources_get_sprite_rect(texture), (Rectangle){10 + i * 36, 10, 24, 24}, (Vector2){0, 0}, 0, WHITE);
     }
 
     // Draw Score
     DrawTextEx(*game_data->font, TextFormat("Score: %d", game_data->score), (Vector2){600 - 160, 10}, 24, 0.0, LIGHTGRAY);
+
+    // Draw info
+    if (game_data->tick_count < 10)
+    {
+        DrawTextEx(*game_data->font, "Use arrow keys to move", (Vector2){20, 600 - 40}, 20, 0.0, LIGHTGRAY);
+    }
+    else if (game_data->tick_count < 20)
+    {
+        DrawTextEx(*game_data->font, "Good luck.", (Vector2){20, 600 - 40}, 20, 0.0, LIGHTGRAY);
+    }
+
+    if (game_data->boost > 1.0) {
+        DrawTextEx(*game_data->font, TextFormat("%.2fx!", game_data->boost), (Vector2){20, 600 - 52}, 32, 0.0, LIGHTGRAY);
+    }
 }
 
 static void game_uninit()
 {
     free(game_data);
     game_data = NULL;
-
-    lua_close(lua);
 }
 
 static Scene game_scene = {
