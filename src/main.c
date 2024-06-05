@@ -6,6 +6,7 @@
 #include "resources.h"
 #include "game_math.h"
 #include "scenes/scene.h"
+#include "scenes/credits.h"
 #include "scenes/end_game.h"
 #include "scenes/game.h"
 #include "scenes/menu.h"
@@ -64,6 +65,9 @@ int main()
         case SCENE_COMMAND_PUSH_GAME_OVER:
             scene_manager_pop(&scene_manager);
             scene_manager_push(&scene_manager, *get_scene_end_game());
+            break;
+        case SCENE_COMMAND_PUSH_CREDITS:
+            scene_manager_push(&scene_manager, *get_scene_credits());
             break;
         case SCENE_COMMAND_POP:
             scene_manager_pop(&scene_manager);
