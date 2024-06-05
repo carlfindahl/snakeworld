@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <math.h>
 
 #include <raylib.h>
 
@@ -78,16 +79,15 @@ static enum SceneCommand game_update()
             game_data->apple = vec2(GetRandomValue(1, 28), GetRandomValue(1, 28));
             snake_increment(s);
             PlaySound(*resources_get_sound(SFE_EAT));
+
             ++game_data->score;
+
+            int extra_score = (game_data->boost - 1.0) * 10.0;
+            game_data->score += extra_score;
 
             if (game_data->score % 5 == 0)
             {
                 game_data->boost += 0.1;
-
-                if (s->life < MAX_LIFE)
-                {
-                    s->life++;
-                }
             }
         }
 
@@ -145,8 +145,11 @@ static void game_draw()
         DrawTextEx(*game_data->font, "Good luck.", (Vector2){20, 600 - 40}, 20, 0.0, LIGHTGRAY);
     }
 
-    if (game_data->boost > 1.0) {
-        DrawTextEx(*game_data->font, TextFormat("%.2fx!", game_data->boost), (Vector2){20, 600 - 52}, 32, 0.0, LIGHTGRAY);
+    if (game_data->boost > 1.0)
+    {
+        Color color = game_data->boost < 1.5 ? YELLOW : RED;
+        color.a = 100;
+        DrawTextEx(*game_data->font, TextFormat("%.2fx!", game_data->boost), (Vector2){20, 600 - 52}, 32, 0.0, color);
     }
 }
 
