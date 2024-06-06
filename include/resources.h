@@ -1,6 +1,3 @@
-#ifndef H_RESOURCES_H
-#define H_RESOURCES_H
-
 #include <raylib.h>
 
 enum SoundEffect
@@ -37,15 +34,13 @@ void resources_load();
 void resources_unload();
 
 /// Get a sound effect - if not initialized, will initialize
-Sound *resources_get_sound(enum SoundEffect se);
+Sound* resources_get_sound(enum SoundEffect se);
 
 /// Get a sprite rectangle for the given resource
 Rectangle resources_get_sprite_rect(enum SpriteRect sr);
 
-/// Get a sprite for the given resource 
-Texture2D *resources_get_sprite(enum TextureId id);
+/// Get a sprite for the given resource
+Texture2D* resources_get_sprite(enum TextureId id);
 
 /// Get the main Game Font
-Font *resources_get_font();
-
-#endif
+Font* resources_get_font();

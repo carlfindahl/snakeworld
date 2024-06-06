@@ -1,8 +1,5 @@
-#ifndef H_CREDITS_H
-#define H_CREDITS_H
+#pragma once
 
 struct Scene;
 
-struct Scene *get_scene_credits();
-
-#endif
+struct Scene* get_scene_credits();

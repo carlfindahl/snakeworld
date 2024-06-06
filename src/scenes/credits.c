@@ -1,14 +1,14 @@
 #include "scenes/credits.h"
-#include "scenes/scene.h"
 #include "resources.h"
+#include "scenes/scene.h"
 
 #include <stdlib.h>
 
-#include <raylib.h>
 #include <math.h>
+#include <raylib.h>
 
-static Font *font = NULL;
-static Texture2D *title = NULL;
+static Font* font       = NULL;
+static Texture2D* title = NULL;
 
 static Color colors[] = {
     RED,
@@ -22,7 +22,7 @@ int current_color = 0;
 
 void credits_init()
 {
-    font = resources_get_font();
+    font  = resources_get_font();
     title = resources_get_sprite(TEXID_TITLE);
 }
 
@@ -44,7 +44,11 @@ void credits_draw()
     size = MeasureTextEx(*font, "Press [ENTER] to return to menu", 16, 0);
     DrawTextEx(*font, "Press [ENTER] to return to menu", (Vector2){300 - size.x / 2.0, 450.0}, 16, 0, WHITE);
 
-    DrawTextureEx(*title, (Vector2){300 - title->width * 1.25, 180}, 0.0, 2.5, colors[current_color++ % (sizeof(colors) / sizeof(Color))]);
+    DrawTextureEx(*title,
+                  (Vector2){300 - title->width * 1.25, 180},
+                  0.0,
+                  2.5,
+                  colors[current_color++ % (sizeof(colors) / sizeof(Color))]);
 }
 
 void credits_uninit()
@@ -53,13 +57,13 @@ void credits_uninit()
 
 static Scene credits_scene = {
     .initialized = 0,
-    .init = credits_init,
-    .update = credits_update,
-    .draw = credits_draw,
-    .uninit = credits_uninit,
+    .init        = credits_init,
+    .update      = credits_update,
+    .draw        = credits_draw,
+    .uninit      = credits_uninit,
 };
 
-Scene *get_scene_credits()
+Scene* get_scene_credits()
 {
     return &credits_scene;
 }

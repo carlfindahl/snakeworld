@@ -1,33 +1,33 @@
 #include "scenes/menu.h"
-#include "scenes/scene.h"
 #include "resources.h"
+#include "scenes/scene.h"
 
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include <raylib.h>
 
 typedef struct MenuData
 {
     int selected_menu_option;
-    Font *game_font;
-    Texture2D *title_texture;
+    Font* game_font;
+    Texture2D* title_texture;
 } MenuData;
 
-static const char *menu_options[] = {
+static const char* menu_options[] = {
     "Play",
     "Credits",
     "Exit",
 };
 
-static MenuData *menu_data = NULL;
+static MenuData* menu_data = NULL;
 
 static void menu_init()
 {
-    menu_data = malloc(sizeof(MenuData));
+    menu_data                       = malloc(sizeof(MenuData));
     menu_data->selected_menu_option = 0;
-    menu_data->game_font = resources_get_font();
-    menu_data->title_texture = resources_get_sprite(TEXID_TITLE);
+    menu_data->game_font            = resources_get_font();
+    menu_data->title_texture        = resources_get_sprite(TEXID_TITLE);
 }
 
 static enum SceneCommand menu_update()
@@ -47,15 +47,9 @@ static enum SceneCommand menu_update()
         PlaySound(*resources_get_sound(SFE_NOTIFICATION));
         switch (menu_data->selected_menu_option)
         {
-        case 0:
-            return SCENE_COMMAND_PUSH_GAME;
-            break;
-        case 1:
-            return SCENE_COMMAND_PUSH_CREDITS;
-            break;
-        case 2:
-            return SCENE_COMMAND_QUIT;
-            break;
+            case 0: return SCENE_COMMAND_PUSH_GAME; break;
+            case 1: return SCENE_COMMAND_PUSH_CREDITS; break;
+            case 2: return SCENE_COMMAND_QUIT; break;
         }
     }
 
@@ -68,8 +62,12 @@ static void menu_draw()
     for (int i = 5; i >= 0; i--)
     {
         Color color = i == 0 ? WHITE : YELLOW;
-        color.a = i == 0 ? 255 : 25;
-        DrawTextureEx(*menu_data->title_texture, (Vector2){300 - menu_data->title_texture->width, 75 + (sin(i * 10 + time) * 10)}, 0.0, 2.0, color);
+        color.a     = i == 0 ? 255 : 25;
+        DrawTextureEx(*menu_data->title_texture,
+                      (Vector2){300 - menu_data->title_texture->width, 75 + (sin(i * 10 + time) * 10)},
+                      0.0,
+                      2.0,
+                      color);
     }
 
     for (int i = 0; i < 3; i++)
@@ -89,13 +87,13 @@ static void menu_uninit()
 
 static Scene menu_scene = {
     .initialized = 0,
-    .init = menu_init,
-    .update = menu_update,
-    .draw = menu_draw,
-    .uninit = menu_uninit,
+    .init        = menu_init,
+    .update      = menu_update,
+    .draw        = menu_draw,
+    .uninit      = menu_uninit,
 };
 
-Scene *get_scene_menu()
+Scene* get_scene_menu()
 {
     return &menu_scene;
 }

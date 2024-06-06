@@ -1,8 +1,5 @@
-#ifndef H_MENU_H
-#define H_MENU_H
+#pragma once
 
 struct Scene;
 
-struct Scene *get_scene_menu();
-
-#endif
+struct Scene* get_scene_menu();

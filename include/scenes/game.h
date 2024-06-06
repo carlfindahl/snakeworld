@@ -1,8 +1,5 @@
-#ifndef H_GAME_H
-#define H_GAME_H
+#pragma once
 
 struct Scene;
 
-struct Scene *get_scene_game();
-
-#endif
+struct Scene* get_scene_game();

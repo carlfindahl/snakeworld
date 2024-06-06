@@ -1,5 +1,4 @@
-#ifndef H_SCENE_H
-#define H_SCENE_H
+#pragma once
 
 #define MAX_SCENES 10
 
@@ -34,14 +33,12 @@ typedef struct SceneManager
 
 SceneManager scene_manager_create();
 
-void scene_manager_push(SceneManager *sm, Scene s);
+void scene_manager_push(SceneManager* sm, Scene s);
 
-void scene_manager_pop(SceneManager *sm);
+void scene_manager_pop(SceneManager* sm);
 
-enum SceneCommand scene_manager_update(SceneManager *sm);
+enum SceneCommand scene_manager_update(SceneManager* sm);
 
-void scene_manager_draw(SceneManager *sm);
+void scene_manager_draw(SceneManager* sm);
 
-void scene_manager_uninit(SceneManager *sm);
-
-#endif
+void scene_manager_uninit(SceneManager* sm);

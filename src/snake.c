@@ -1,23 +1,23 @@
 #include <raylib.h>
 
-#include "snake.h"
-#include "resources.h"
 #include "game_math.h"
+#include "resources.h"
+#include "snake.h"
 
 Snake init_snake(uint32_t x, uint32_t y, uint32_t base_length)
 {
     Snake s;
-    s.length = base_length;
-    s.invulnerable = 0;
-    s.life = 3;
-    s.positions[0] = x | (y << 16);
-    s.positions[1] = x | (y << 16);
-    s.direction = RIGHT;
+    s.length             = base_length;
+    s.invulnerable       = 0;
+    s.life               = 3;
+    s.positions[0]       = x | (y << 16);
+    s.positions[1]       = x | (y << 16);
+    s.direction          = RIGHT;
     s.previous_direction = RIGHT;
     return s;
 }
 
-void snake_update(Snake *s)
+void snake_update(Snake* s, void (*on_damage)())
 {
     if (s->invulnerable > 0)
     {
@@ -31,7 +31,8 @@ void snake_update(Snake *s)
     }
 
     // Move the head
-    s->positions[0] = s->positions[0] + (s->direction == RIGHT) - (s->direction == LEFT) + ((s->direction == DOWN) << 16) - ((s->direction == UP) << 16);
+    s->positions[0] = s->positions[0] + (s->direction == RIGHT) - (s->direction == LEFT) + ((s->direction == DOWN) << 16) -
+                      ((s->direction == UP) << 16);
 
     // Check for collision
     if (s->invulnerable <= 0)
@@ -41,7 +42,7 @@ void snake_update(Snake *s)
         {
             if (s->positions[0] == s->positions[i])
             {
-                damaged = true;
+                damaged   = true;
                 s->length = i;
                 break;
             }
@@ -50,9 +51,9 @@ void snake_update(Snake *s)
         // Check for out of bounds
         if (snake_x(s, 0) < 0 || snake_x(s, 0) >= 30 || snake_y(s, 0) < 0 || snake_y(s, 0) >= 30)
         {
-            damaged = true;
+            damaged         = true;
             s->positions[0] = 13 | (15 << 16);
-            s->direction = RIGHT;
+            s->direction    = RIGHT;
         }
 
         if (damaged)
@@ -60,22 +61,23 @@ void snake_update(Snake *s)
             --s->life;
             s->invulnerable = 4;
             PlaySound(*resources_get_sound(SFE_PAIN));
+            on_damage();
         }
     }
 }
 
-void snake_increment(Snake *s)
+void snake_increment(Snake* s)
 {
     s->positions[s->length] = s->positions[s->length - 1];
     ++s->length;
 }
 
-void snake_decrement(Snake *s)
+void snake_decrement(Snake* s)
 {
     --s->length;
 }
 
-uint32_t snake_x(Snake *s, uint32_t position)
+uint32_t snake_x(Snake* s, uint32_t position)
 {
     if (position >= SNAKE_MAX_LENGTH)
     {
@@ -85,7 +87,7 @@ uint32_t snake_x(Snake *s, uint32_t position)
     return vec2_x(s->positions[position]);
 }
 
-uint32_t snake_y(Snake *s, uint32_t position)
+uint32_t snake_y(Snake* s, uint32_t position)
 {
     if (position >= SNAKE_MAX_LENGTH)
     {

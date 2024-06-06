@@ -1,15 +1,15 @@
 #include <raylib.h>
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 
-#include "snake.h"
-#include "resources.h"
 #include "game_math.h"
-#include "scenes/scene.h"
+#include "resources.h"
 #include "scenes/credits.h"
 #include "scenes/end_game.h"
 #include "scenes/game.h"
 #include "scenes/menu.h"
+#include "scenes/scene.h"
+#include "snake.h"
 
 enum PlayState
 {
@@ -31,7 +31,7 @@ int main()
     InitAudioDevice();
     SetTargetFPS(60);
 
-    Music theme = LoadMusicStream("res/snakeworld_theme.ogg");
+    Music theme   = LoadMusicStream("res/snakeworld_theme.ogg");
     theme.looping = true;
     PlayMusicStream(theme);
 
@@ -53,27 +53,16 @@ int main()
 
         switch (command)
         {
-        case SCENE_COMMAND_QUIT:
-            keep_running = 0;
-            break;
-        case SCENE_COMMAND_PUSH_GAME:
-            scene_manager_push(&scene_manager, *get_scene_game());
-            break;
-        case SCENE_COMMAND_PUSH_MENU:
-            scene_manager_push(&scene_manager, *get_scene_menu());
-            break;
-        case SCENE_COMMAND_PUSH_GAME_OVER:
-            scene_manager_pop(&scene_manager);
-            scene_manager_push(&scene_manager, *get_scene_end_game());
-            break;
-        case SCENE_COMMAND_PUSH_CREDITS:
-            scene_manager_push(&scene_manager, *get_scene_credits());
-            break;
-        case SCENE_COMMAND_POP:
-            scene_manager_pop(&scene_manager);
-            break;
-        default:
-            break;
+            case SCENE_COMMAND_QUIT: keep_running = 0; break;
+            case SCENE_COMMAND_PUSH_GAME: scene_manager_push(&scene_manager, *get_scene_game()); break;
+            case SCENE_COMMAND_PUSH_MENU: scene_manager_push(&scene_manager, *get_scene_menu()); break;
+            case SCENE_COMMAND_PUSH_GAME_OVER:
+                scene_manager_pop(&scene_manager);
+                scene_manager_push(&scene_manager, *get_scene_end_game());
+                break;
+            case SCENE_COMMAND_PUSH_CREDITS: scene_manager_push(&scene_manager, *get_scene_credits()); break;
+            case SCENE_COMMAND_POP: scene_manager_pop(&scene_manager); break;
+            default: break;
         }
 
         // Debug keys
@@ -85,7 +74,7 @@ int main()
 
         if (IsWindowResized())
         {
-            int width = GetScreenWidth();
+            int width  = GetScreenWidth();
             int height = GetScreenHeight();
 
             if (!IsWindowFullscreen())
@@ -113,7 +102,12 @@ int main()
         float time = GetTime();
         BeginShaderMode(shader);
         SetShaderValueV(shader, GetShaderLocation(shader, "time"), &time, SHADER_UNIFORM_FLOAT, 1);
-        DrawTexturePro(target.texture, (Rectangle){0, 0, RENDER_SIZE, -RENDER_SIZE}, (Rectangle){0.0, 0, GetScreenWidth(), GetScreenHeight()}, (Vector2){0, 0}, 0, RED);
+        DrawTexturePro(target.texture,
+                       (Rectangle){0, 0, RENDER_SIZE, -RENDER_SIZE},
+                       (Rectangle){0.0, 0, GetScreenWidth(), GetScreenHeight()},
+                       (Vector2){0, 0},
+                       0,
+                       RED);
         EndShaderMode();
 
         EndDrawing();

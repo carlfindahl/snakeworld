@@ -1,6 +1,3 @@
-#ifndef H_SNAKE_H
-#define H_SNAKE_H
-
 #include <stdint.h>
 #include <stdio.h>
 
@@ -29,18 +26,16 @@ typedef struct Snake
 Snake init_snake(uint32_t x, uint32_t y, uint32_t base_length);
 
 // Update the snake's position
-void snake_update(Snake *s);
+void snake_update(Snake* s, void (*on_damage)());
 
 // Increase length of snake
-void snake_increment(Snake *s);
+void snake_increment(Snake* s);
 
 // Decrease length of snake
-void snake_decrement(Snake *s);
+void snake_decrement(Snake* s);
 
 // Return the X coordinate of the snake at the given position
-uint32_t snake_x(Snake *s, uint32_t position);
+uint32_t snake_x(Snake* s, uint32_t position);
 
 // Return the Y coordinate of the snake at the given position
-uint32_t snake_y(Snake *s, uint32_t position);
-
-#endif
+uint32_t snake_y(Snake* s, uint32_t position);

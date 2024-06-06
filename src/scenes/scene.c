@@ -1,9 +1,9 @@
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "scenes/scene.h"
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 SceneManager scene_manager_create()
 {
@@ -12,7 +12,7 @@ SceneManager scene_manager_create()
     return sm;
 }
 
-void scene_manager_push(SceneManager *sm, Scene s)
+void scene_manager_push(SceneManager* sm, Scene s)
 {
     if (sm->top == MAX_SCENES - 1)
     {
@@ -30,7 +30,7 @@ void scene_manager_push(SceneManager *sm, Scene s)
     sm->scene[sm->top] = s;
 }
 
-void scene_manager_pop(SceneManager *sm)
+void scene_manager_pop(SceneManager* sm)
 {
     if (sm->top == -1)
     {
@@ -42,7 +42,7 @@ void scene_manager_pop(SceneManager *sm)
     sm->top--;
 }
 
-enum SceneCommand scene_manager_update(SceneManager *sm)
+enum SceneCommand scene_manager_update(SceneManager* sm)
 {
     if (sm->top == -1)
     {
@@ -52,7 +52,7 @@ enum SceneCommand scene_manager_update(SceneManager *sm)
     return sm->scene[sm->top].update();
 }
 
-void scene_manager_draw(SceneManager *sm)
+void scene_manager_draw(SceneManager* sm)
 {
     if (sm->top == -1)
     {
@@ -62,7 +62,7 @@ void scene_manager_draw(SceneManager *sm)
     sm->scene[sm->top].draw();
 }
 
-void scene_manager_uninit(SceneManager *sm)
+void scene_manager_uninit(SceneManager* sm)
 {
     for (int i = sm->top; i > -1; i--)
     {

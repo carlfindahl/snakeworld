@@ -14,28 +14,28 @@ void resources_load()
 {
     if (!initialized)
     {
-        sounds[SFE_CLICK] = LoadSound("res/click.wav");
-        sounds[SFE_EAT] = LoadSound("res/eat.wav");
+        sounds[SFE_CLICK]        = LoadSound("res/click.wav");
+        sounds[SFE_EAT]          = LoadSound("res/eat.wav");
         sounds[SFE_NOTIFICATION] = LoadSound("res/notification.wav");
-        sounds[SFE_PAIN] = LoadSound("res/pain.wav");
+        sounds[SFE_PAIN]         = LoadSound("res/pain.wav");
 
         sprites[TEXID_SPRITES] = LoadTexture("res/sprites.png");
-        sprites[TEXID_TITLE] = LoadTexture("res/title.png");
+        sprites[TEXID_TITLE]   = LoadTexture("res/title.png");
 
         game_font = LoadFont("res/VCR_FONT.ttf");
 
-        sprite_rects[SR_SNAKE_HEAD] = (Rectangle){0, 0, 16, 16};
-        sprite_rects[SR_SNAKE_BODY] = (Rectangle){16, 0, 16, 16};
-        sprite_rects[SR_APPLE] = (Rectangle){0, 16, 16, 16};
-        sprite_rects[SR_HEART] = (Rectangle){16, 16, 16, 16};
-        sprite_rects[SR_TOMBSTONE] = (Rectangle){0, 32, 16, 16};
+        sprite_rects[SR_SNAKE_HEAD]  = (Rectangle){0, 0, 16, 16};
+        sprite_rects[SR_SNAKE_BODY]  = (Rectangle){16, 0, 16, 16};
+        sprite_rects[SR_APPLE]       = (Rectangle){0, 16, 16, 16};
+        sprite_rects[SR_HEART]       = (Rectangle){16, 16, 16, 16};
+        sprite_rects[SR_TOMBSTONE]   = (Rectangle){0, 32, 16, 16};
         sprite_rects[SR_EMPTY_HEART] = (Rectangle){16, 32, 16, 16};
 
         initialized = true;
     }
 }
 
-Sound *resources_get_sound(enum SoundEffect se)
+Sound* resources_get_sound(enum SoundEffect se)
 {
     if (!initialized)
     {
@@ -50,12 +50,12 @@ Rectangle resources_get_sprite_rect(enum SpriteRect sr)
     return sprite_rects[sr];
 }
 
-Texture2D *resources_get_sprite(enum TextureId id)
+Texture2D* resources_get_sprite(enum TextureId id)
 {
     return &sprites[id];
 }
 
-Font *resources_get_font()
+Font* resources_get_font()
 {
     return &game_font;
 }
