@@ -1,0 +1,55 @@
+#pragma once
+
+#include "scenes/end_game.h"
+#include "snake.h"
+
+#include <stdint.h>
+#include <string.h>
+
+enum GameEventIdentifier
+{
+    GME_NOTHING,
+    GME_PUSH_SCENE,
+    GME_POP_SCENE,
+    GME_QUIT_GAME,
+    GME_ACTION_SNAKE_DIRECTION_CHANGE,
+    GME_SNAKE_DAMAGED,
+    GME_EVENT_COUNT,
+};
+
+struct GameEvent
+{
+    enum GameEventIdentifier identifier;
+    union
+    {
+        struct
+        {
+            struct Scene* (*scene_fn)();
+        } push_scene;
+
+        struct
+        {
+            enum Direction old_dir;
+            enum Direction new_dir;
+        } snake_direction_change;
+
+        struct
+        {
+            int damage;
+            int new_health;
+        } snake_damaged;
+    } data;
+};
+
+typedef void (*Observer)(struct GameEvent*);
+
+typedef struct MessageQueue
+{
+    uint64_t size;
+    uint64_t capacity;
+    struct GameEvent** messages;
+
+    uint64_t observer_size;
+    uint64_t observer_capacity;
+    Observer* observers;
+} MessageQueue;

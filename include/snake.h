@@ -8,7 +8,7 @@ enum Direction
     UP,
     DOWN,
     LEFT,
-    RIGHT
+    RIGHT,
 };
 
 typedef struct Snake
