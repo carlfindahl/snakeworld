@@ -25,6 +25,27 @@ const int TILE_SIZE = 20;
 // Size of the render texture that is blitted to the full screen
 const int RENDER_SIZE = 600;
 
+struct SceneCommandContext
+{
+    SceneManager* scene_manager;
+    int* keep_running;
+};
+
+void observe_scene_commands(void* scene_context, struct GameEvent* event)
+{
+    struct SceneCommandContext* sc = scene_context;
+
+    switch (event->identifier)
+    {
+        case GME_PUSH_SCENE: scene_manager_push(sc->scene_manager, *event->data.push_scene.scene_fn()); break;
+        case GME_POP_SCENE: scene_manager_pop(sc->scene_manager); break;
+        case GME_QUIT_GAME: memset(sc->keep_running, 0, sizeof(int)); break;
+        default: break;
+    }
+
+    printf("Event handled: %d\n", event->identifier);
+}
+
 int main()
 {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -47,25 +68,17 @@ int main()
     mq_init();
 
     int keep_running = 1;
+
+    // Observe scene commands
+    struct SceneCommandContext scene_manager_context = {&scene_manager, &keep_running};
+    mq_listen((Observer){&scene_manager_context, observe_scene_commands});
+
     while (!WindowShouldClose() && keep_running)
     {
         UpdateMusicStream(theme);
 
-        enum SceneCommand command = scene_manager_update(&scene_manager);
-
-        switch (command)
-        {
-            case SCENE_COMMAND_QUIT: keep_running = 0; break;
-            case SCENE_COMMAND_PUSH_GAME: scene_manager_push(&scene_manager, *get_scene_game()); break;
-            case SCENE_COMMAND_PUSH_MENU: scene_manager_push(&scene_manager, *get_scene_menu()); break;
-            case SCENE_COMMAND_PUSH_GAME_OVER:
-                scene_manager_pop(&scene_manager);
-                scene_manager_push(&scene_manager, *get_scene_end_game());
-                break;
-            case SCENE_COMMAND_PUSH_CREDITS: scene_manager_push(&scene_manager, *get_scene_credits()); break;
-            case SCENE_COMMAND_POP: scene_manager_pop(&scene_manager); break;
-            default: break;
-        }
+        scene_manager_update(&scene_manager);
+        mq_process();
 
         // Debug keys
         if (IsKeyPressed(KEY_R))
@@ -96,7 +109,7 @@ int main()
         BeginTextureMode(target);
         ClearBackground((Color){0, 25, 40, 255});
         scene_manager_draw(&scene_manager);
-        DrawRectangleLinesEx((Rectangle){0, 0, 600, 600}, 5, DARKBLUE);
+        DrawRectangleLinesEx((Rectangle){0, 0, RENDER_SIZE, RENDER_SIZE}, 5, DARKBLUE);
         EndTextureMode();
 
         // Render post process on texture
