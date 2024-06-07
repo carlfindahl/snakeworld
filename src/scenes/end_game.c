@@ -1,4 +1,5 @@
 #include "scenes/end_game.h"
+#include "message_queue.h"
 #include "resources.h"
 #include "scenes/scene.h"
 
@@ -15,14 +16,13 @@ void scene_end_game_init()
     sprite_sheet = resources_get_sprite(TEXID_SPRITES);
 }
 
-enum SceneCommand scene_end_game_update()
+void scene_end_game_update()
 {
     if (IsKeyPressed(KEY_ENTER))
     {
-        return SCENE_COMMAND_POP;
+        struct GameEvent event = {.identifier = GME_POP_SCENE};
+        mq_push(event);
     }
-
-    return SCENE_COMMAND_NONE;
 }
 
 void scene_end_game_draw()

@@ -42,14 +42,14 @@ void scene_manager_pop(SceneManager* sm)
     sm->top--;
 }
 
-enum SceneCommand scene_manager_update(SceneManager* sm)
+void scene_manager_update(SceneManager* sm)
 {
     if (sm->top == -1)
     {
-        return SCENE_COMMAND_NONE;
+        return;
     }
 
-    return sm->scene[sm->top].update();
+    sm->scene[sm->top].update();
 }
 
 void scene_manager_draw(SceneManager* sm)

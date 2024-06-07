@@ -1,6 +1,8 @@
 #include "scenes/game.h"
 #include "game_math.h"
+#include "message_queue.h"
 #include "resources.h"
+#include "scenes/end_game.h"
 #include "scenes/scene.h"
 #include "snake.h"
 
@@ -51,7 +53,7 @@ static void snake_damaged()
     game_data->boost = 1.0;
 }
 
-static enum SceneCommand game_update()
+void game_update()
 {
     Snake* s = &game_data->snake;
 
@@ -105,10 +107,13 @@ static enum SceneCommand game_update()
 
     if (s->life <= 0)
     {
-        return SCENE_COMMAND_PUSH_GAME_OVER;
-    }
+        struct GameEvent event = {.identifier = GME_POP_SCENE};
+        mq_push(event);
 
-    return SCENE_COMMAND_NONE;
+        event.identifier               = GME_PUSH_SCENE;
+        event.data.push_scene.scene_fn = get_scene_end_game;
+        mq_push(event);
+    }
 }
 
 static void game_draw()

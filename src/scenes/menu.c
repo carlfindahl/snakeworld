@@ -1,5 +1,8 @@
 #include "scenes/menu.h"
+#include "message_queue.h"
 #include "resources.h"
+#include "scenes/credits.h"
+#include "scenes/game.h"
 #include "scenes/scene.h"
 
 #include <math.h>
@@ -30,7 +33,7 @@ static void menu_init()
     menu_data->title_texture        = resources_get_sprite(TEXID_TITLE);
 }
 
-static enum SceneCommand menu_update()
+void menu_update()
 {
     if (IsKeyPressed(KEY_UP))
     {
@@ -45,15 +48,24 @@ static enum SceneCommand menu_update()
     else if (IsKeyPressed(KEY_ENTER))
     {
         PlaySound(*resources_get_sound(SFE_NOTIFICATION));
+
+        struct GameEvent event = {0};
         switch (menu_data->selected_menu_option)
         {
-            case 0: return SCENE_COMMAND_PUSH_GAME; break;
-            case 1: return SCENE_COMMAND_PUSH_CREDITS; break;
-            case 2: return SCENE_COMMAND_QUIT; break;
+            case 0:
+                event.identifier               = GME_PUSH_SCENE;
+                event.data.push_scene.scene_fn = get_scene_game;
+                break;
+            case 1:
+                event.identifier               = GME_PUSH_SCENE;
+                event.data.push_scene.scene_fn = get_scene_credits;
+                break;
+                break;
+            case 2: event.identifier = GME_QUIT_GAME; break;
         }
-    }
 
-    return SCENE_COMMAND_NONE;
+        mq_push(event);
+    }
 }
 
 static void menu_draw()

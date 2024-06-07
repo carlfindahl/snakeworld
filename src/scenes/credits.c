@@ -1,4 +1,5 @@
 #include "scenes/credits.h"
+#include "message_queue.h"
 #include "resources.h"
 #include "scenes/scene.h"
 
@@ -26,14 +27,13 @@ void credits_init()
     title = resources_get_sprite(TEXID_TITLE);
 }
 
-enum SceneCommand credits_update()
+void credits_update()
 {
     if (IsKeyPressed(KEY_ENTER))
     {
-        return SCENE_COMMAND_POP;
+        struct GameEvent event = {.identifier = GME_POP_SCENE};
+        mq_push(event);
     }
-
-    return SCENE_COMMAND_NONE;
 }
 
 void credits_draw()
