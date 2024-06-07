@@ -6,7 +6,7 @@
 
 static MessageQueue message_queue = {0};
 
-MessageQueue* mq_init()
+void mq_init()
 {
     if (message_queue.messages == NULL)
     {
@@ -19,8 +19,6 @@ MessageQueue* mq_init()
         message_queue.observer_capacity = 16;
         message_queue.observers         = calloc(message_queue.observer_capacity, sizeof(Observer));
     }
-
-    return &message_queue;
 }
 
 void mq_push(struct GameEvent msg)

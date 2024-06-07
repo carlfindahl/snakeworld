@@ -53,3 +53,10 @@ typedef struct MessageQueue
     uint64_t observer_capacity;
     Observer* observers;
 } MessageQueue;
+
+void mq_init();
+void mq_push(struct GameEvent msg);
+void mq_listen(Observer obs);
+void mq_unlisten(Observer obs);
+void mq_process();
+void mq_free();

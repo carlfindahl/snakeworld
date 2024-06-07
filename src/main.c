@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "game_math.h"
+#include "message_queue.h"
 #include "resources.h"
 #include "scenes/credits.h"
 #include "scenes/end_game.h"
@@ -43,6 +44,7 @@ int main()
     Shader shader = LoadShader(0, "post.fs");
 
     resources_load();
+    mq_init();
 
     int keep_running = 1;
     while (!WindowShouldClose() && keep_running)
@@ -113,8 +115,8 @@ int main()
         EndDrawing();
     }
 
+    mq_free();
     scene_manager_uninit(&scene_manager);
-
     resources_unload();
 
     UnloadShader(shader);
