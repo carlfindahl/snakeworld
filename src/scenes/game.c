@@ -33,6 +33,14 @@ typedef struct GameData
 
 static GameData* game_data = NULL;
 
+static void on_snake_damaged(void* _, struct GameEvent* event)
+{
+    if (event->identifier == GME_SNAKE_DAMAGED)
+    {
+        game_data->boost = 1.0;
+    }
+}
+
 static void game_init()
 {
     game_data                  = malloc(sizeof(GameData));
@@ -46,11 +54,8 @@ static void game_init()
     game_data->delay_time      = BASE_GAME_SPEED;
     game_data->sprite_sheet    = resources_get_sprite(TEXID_SPRITES);
     game_data->font            = resources_get_font();
-}
 
-static void snake_damaged()
-{
-    game_data->boost = 1.0;
+    mq_listen((Observer){.context = NULL, .fn = on_snake_damaged});
 }
 
 void game_update()
@@ -78,20 +83,18 @@ void game_update()
     game_data->tick_timer -= GetFrameTime();
     if (game_data->tick_timer < 0.0)
     {
-        s->previous_direction = s->direction;
-        snake_update(s, snake_damaged);
         game_data->tick_count++;
 
-        // Eat apple
+        snake_update(s);
+        s->previous_direction = s->direction;
+
+        // Eating food
         if (s->positions[0] == game_data->apple)
         {
             game_data->apple = vec2(GetRandomValue(1, 28), GetRandomValue(1, 28));
             snake_increment(s);
-            PlaySound(*resources_get_sound(SFE_EAT));
 
-            ++game_data->score;
-
-            int extra_score = (game_data->boost - 1.0) * 10.0;
+            int extra_score = 1 + (game_data->boost - 1.0) * 10.0;
             extra_score += s->length / 5;
             game_data->score += extra_score;
 
@@ -100,11 +103,17 @@ void game_update()
                 game_data->boost_threshold += 15 * (game_data->boost - 1.0) * 10.0;
                 game_data->boost += 0.1;
             }
+
+            struct GameEvent event            = {.identifier = GME_FOOD_EATEN};
+            event.data.food_eaten.score_delta = extra_score;
+            event.data.food_eaten.new_score   = game_data->score;
+            mq_push(event);
         }
 
         game_data->tick_timer = game_data->delay_time / game_data->boost;
     }
 
+    // Death and Game Over
     if (s->life <= 0)
     {
         struct GameEvent event = {.identifier = GME_POP_SCENE};
@@ -184,6 +193,8 @@ static void game_draw()
 
 static void game_uninit()
 {
+    mq_unlisten(on_snake_damaged);
+
     free(game_data);
     game_data = NULL;
 }

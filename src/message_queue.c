@@ -41,7 +41,7 @@ void mq_listen(Observer obs)
         message_queue.observers = realloc(message_queue.observers, message_queue.observer_capacity * sizeof(Observer));
     }
 
-    memcpy(&message_queue.observers[message_queue.observer_size], &obs, sizeof(Observer));
+    memcpy(message_queue.observers + message_queue.observer_size, &obs, sizeof(Observer));
     message_queue.observer_size++;
 }
 
@@ -57,10 +57,11 @@ void mq_unlisten(ObserverFn obs)
         }
     }
 
-    memcpy(&message_queue.observers[obs_idx],
-           &message_queue.observers[obs_idx + 1],
-           (message_queue.observer_size - obs_idx) * sizeof(Observer));
+    memmove(message_queue.observers + obs_idx,
+            message_queue.observers + obs_idx + 1,
+            (message_queue.observer_size - obs_idx - 1) * sizeof(Observer));
 
+    // Now we're good
     --message_queue.observer_size;
 }
 

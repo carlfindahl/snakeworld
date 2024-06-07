@@ -14,6 +14,7 @@ enum GameEventIdentifier
     GME_QUIT_GAME,
     GME_ACTION_SNAKE_DIRECTION_CHANGE,
     GME_SNAKE_DAMAGED,
+    GME_FOOD_EATEN,
     GME_EVENT_COUNT,
 };
 
@@ -38,6 +39,12 @@ struct GameEvent
             int damage;
             int new_health;
         } snake_damaged;
+
+        struct
+        {
+            int score_delta;
+            int new_score;
+        } food_eaten;
     } data;
 };
 

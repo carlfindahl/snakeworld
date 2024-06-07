@@ -31,6 +31,16 @@ struct SceneCommandContext
     int* keep_running;
 };
 
+void observe_sfx(void* _, struct GameEvent* event)
+{
+    switch (event->identifier)
+    {
+        case GME_SNAKE_DAMAGED: PlaySound(*resources_get_sound(SFE_PAIN)); break;
+        case GME_FOOD_EATEN: PlaySound(*resources_get_sound(SFE_EAT)); break;
+        default: break;
+    }
+}
+
 void observe_scene_commands(void* scene_context, struct GameEvent* event)
 {
     struct SceneCommandContext* sc = scene_context;
@@ -42,8 +52,6 @@ void observe_scene_commands(void* scene_context, struct GameEvent* event)
         case GME_QUIT_GAME: memset(sc->keep_running, 0, sizeof(int)); break;
         default: break;
     }
-
-    printf("Event handled: %d\n", event->identifier);
 }
 
 int main()
@@ -72,6 +80,7 @@ int main()
     // Observe scene commands
     struct SceneCommandContext scene_manager_context = {&scene_manager, &keep_running};
     mq_listen((Observer){&scene_manager_context, observe_scene_commands});
+    mq_listen((Observer){NULL, observe_sfx});
 
     while (!WindowShouldClose() && keep_running)
     {
@@ -128,8 +137,12 @@ int main()
         EndDrawing();
     }
 
-    mq_free();
     scene_manager_uninit(&scene_manager);
+
+    mq_unlisten(observe_sfx);
+    mq_unlisten(observe_scene_commands);
+    mq_free();
+
     resources_unload();
 
     UnloadShader(shader);

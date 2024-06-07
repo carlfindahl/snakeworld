@@ -1,9 +1,9 @@
-#include <raylib.h>
-
-#include "game_math.h"
-#include "resources.h"
 #include "snake.h"
+#include "game_math.h"
+#include "message_queue.h"
+#include "resources.h"
 
+#include <raylib.h>
 Snake init_snake(uint32_t x, uint32_t y, uint32_t base_length)
 {
     Snake s;
@@ -17,7 +17,7 @@ Snake init_snake(uint32_t x, uint32_t y, uint32_t base_length)
     return s;
 }
 
-void snake_update(Snake* s, void (*on_damage)())
+void snake_update(Snake* s)
 {
     if (s->invulnerable > 0)
     {
@@ -60,8 +60,12 @@ void snake_update(Snake* s, void (*on_damage)())
         {
             --s->life;
             s->invulnerable = 4;
-            PlaySound(*resources_get_sound(SFE_PAIN));
-            on_damage();
+
+            // Send damage event
+            struct GameEvent event              = {.identifier = GME_SNAKE_DAMAGED};
+            event.data.snake_damaged.damage     = 1;
+            event.data.snake_damaged.new_health = s->life;
+            mq_push(event);
         }
     }
 }
