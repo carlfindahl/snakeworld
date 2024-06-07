@@ -29,7 +29,7 @@ void mq_push(struct GameEvent msg)
         message_queue.messages = realloc(message_queue.messages, message_queue.capacity * sizeof(struct GameEvent*));
     }
 
-    *message_queue.messages[message_queue.size] = msg;
+    memcpy(&message_queue.messages[message_queue.size], &msg, sizeof(struct GameEvent));
     message_queue.size++;
 }
 
@@ -41,16 +41,16 @@ void mq_listen(Observer obs)
         message_queue.observers = realloc(message_queue.observers, message_queue.observer_capacity * sizeof(Observer));
     }
 
-    message_queue.observers[message_queue.observer_size] = obs;
+    memcpy(&message_queue.observers[message_queue.observer_size], &obs, sizeof(Observer));
     message_queue.observer_size++;
 }
 
-void mq_unlisten(Observer obs)
+void mq_unlisten(ObserverFn obs)
 {
     uint64_t obs_idx = 0;
     for (uint64_t i = 0; i < message_queue.observer_size; i++)
     {
-        if (message_queue.observers[i] == obs)
+        if (message_queue.observers[i].fn == obs)
         {
             obs_idx = i;
             break;
@@ -70,7 +70,8 @@ void mq_process()
     {
         for (uint64_t j = 0; j < message_queue.observer_size; j++)
         {
-            message_queue.observers[j](message_queue.messages[i]);
+            Observer* obs = &message_queue.observers[j];
+            obs->fn(obs->context, &message_queue.messages[i]);
         }
     }
 

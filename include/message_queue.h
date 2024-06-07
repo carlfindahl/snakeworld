@@ -41,13 +41,19 @@ struct GameEvent
     } data;
 };
 
-typedef void (*Observer)(struct GameEvent*);
+typedef void (*ObserverFn)(void*, struct GameEvent*);
+
+typedef struct Observer
+{
+    void* context;
+    ObserverFn fn;
+} Observer;
 
 typedef struct MessageQueue
 {
     uint64_t size;
     uint64_t capacity;
-    struct GameEvent** messages;
+    struct GameEvent* messages;
 
     uint64_t observer_size;
     uint64_t observer_capacity;
@@ -57,6 +63,6 @@ typedef struct MessageQueue
 void mq_init();
 void mq_push(struct GameEvent msg);
 void mq_listen(Observer obs);
-void mq_unlisten(Observer obs);
+void mq_unlisten(ObserverFn obs);
 void mq_process();
 void mq_free();
