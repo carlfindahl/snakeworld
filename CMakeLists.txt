@@ -29,7 +29,7 @@ add_git_dependency(
 target_compile_features(snakeworld PRIVATE c_std_17)
 
 target_include_directories(snakeworld PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/src
 )
 
 target_sources(snakeworld PRIVATE
