@@ -37,6 +37,7 @@ target_sources(snakeworld PRIVATE
     ${CMAKE_SOURCE_DIR}/src/snake.c
     ${CMAKE_SOURCE_DIR}/src/game_math.c
     ${CMAKE_SOURCE_DIR}/src/resources.c
+    ${CMAKE_SOURCE_DIR}/src/kv_store.c
     ${CMAKE_SOURCE_DIR}/src/message_queue.c
     ${CMAKE_SOURCE_DIR}/src/scenes/menu.c
     ${CMAKE_SOURCE_DIR}/src/scenes/game.c
