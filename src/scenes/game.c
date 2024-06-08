@@ -103,17 +103,29 @@ void game_update()
         game_data->tick_count++;
 
         // Update walls
-        if (game_data->tick_count % 60 == 0)
+        if (game_data->tick_count % 70 == 0)
         {
             for (int i = 0; i < game_data->wall_count; i++)
             {
                 game_data->walls[i].active = !game_data->walls[i].active;
             }
 
-            spawn_wall(vec2(GetRandomValue(1, 28), GetRandomValue(1, 28)));
-            spawn_wall(vec2(GetRandomValue(1, 28), GetRandomValue(1, 28)));
-            spawn_wall(vec2(GetRandomValue(1, 28), GetRandomValue(1, 28)));
-            spawn_wall(vec2(GetRandomValue(1, 28), GetRandomValue(1, 28)));
+            int x   = GetRandomValue(1, 28);
+            int y   = GetRandomValue(1, 28);
+            int dir = GetRandomValue(0, 1);
+            int len = GetRandomValue(1, 5);
+
+            for (int i = 0; i < len; i++)
+            {
+                if (dir == 0)
+                {
+                    spawn_wall(vec2(x, y + i));
+                }
+                else
+                {
+                    spawn_wall(vec2(x + i, y));
+                }
+            }
         }
 
         snake_update(s);
