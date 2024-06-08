@@ -89,6 +89,8 @@ static void menu_draw()
         Vector2 size = MeasureTextEx(*menu_data->game_font, menu_options[i], 32, 0);
         DrawTextEx(*menu_data->game_font, menu_options[i], (Vector2){300 - size.x / 2, 325 + 40 * i}, 32, 0, color);
     }
+
+    DrawTextEx(*menu_data->game_font, "Tap \"R\" to toggle scanlines.", (Vector2){20, 600 - 30}, 16, 0, WHITE);
 }
 
 static void menu_uninit()

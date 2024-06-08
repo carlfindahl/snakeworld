@@ -19,8 +19,9 @@ void resources_load()
         sounds[SFE_NOTIFICATION] = LoadSound("res/notification.wav");
         sounds[SFE_PAIN]         = LoadSound("res/pain.wav");
 
-        sprites[TEXID_SPRITES] = LoadTexture("res/sprites.png");
-        sprites[TEXID_TITLE]   = LoadTexture("res/title.png");
+        sprites[TEXID_SPRITES]    = LoadTexture("res/sprites.png");
+        sprites[TEXID_TITLE]      = LoadTexture("res/title.png");
+        sprites[TEXID_BACKGROUND] = LoadTexture("res/bg.png");
 
         game_font = LoadFont("res/VCR_FONT.ttf");
 

@@ -1,7 +1,3 @@
-#include <raylib.h>
-#include <stdint.h>
-#include <stdio.h>
-
 #include "game_math.h"
 #include "message_queue.h"
 #include "resources.h"
@@ -11,6 +7,11 @@
 #include "scenes/menu.h"
 #include "scenes/scene.h"
 #include "snake.h"
+
+#include <raylib.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
 
 // Size of each tile
 const int TILE_SIZE = 20;
@@ -69,6 +70,7 @@ int main()
     mq_init();
 
     int keep_running = 1;
+    bool enable_post = true;
 
     // Observe scene commands
     struct SceneCommandContext scene_manager_context = {&scene_manager, &keep_running};
@@ -85,8 +87,7 @@ int main()
         // Debug keys
         if (IsKeyPressed(KEY_R))
         {
-            UnloadShader(shader);
-            shader = LoadShader(0, "post.fs");
+            enable_post = !enable_post;
         }
 
         if (IsWindowResized())
@@ -110,22 +111,39 @@ int main()
         // Render on to a texture
         BeginTextureMode(target);
         ClearBackground((Color){0, 25, 40, 255});
+
+        DrawTexturePro(*resources_get_sprite(TEXID_BACKGROUND),
+                       (Rectangle){0, 0, RENDER_SIZE, RENDER_SIZE},
+                       (Rectangle){0, 0, RENDER_SIZE, RENDER_SIZE},
+                       (Vector2){0, 0},
+                       0,
+                       WHITE);
+
         scene_manager_draw(&scene_manager);
         DrawRectangleLinesEx((Rectangle){0, 0, RENDER_SIZE, RENDER_SIZE}, 5, DARKBLUE);
         EndTextureMode();
 
         // Render post process on texture
         BeginDrawing();
-        float time = GetTime();
-        BeginShaderMode(shader);
-        SetShaderValueV(shader, GetShaderLocation(shader, "time"), &time, SHADER_UNIFORM_FLOAT, 1);
+
+        if (enable_post)
+        {
+            float time = GetTime();
+            BeginShaderMode(shader);
+            SetShaderValueV(shader, GetShaderLocation(shader, "time"), &time, SHADER_UNIFORM_FLOAT, 1);
+        }
+
         DrawTexturePro(target.texture,
                        (Rectangle){0, 0, RENDER_SIZE, -RENDER_SIZE},
                        (Rectangle){0.0, 0, GetScreenWidth(), GetScreenHeight()},
                        (Vector2){0, 0},
                        0,
-                       RED);
-        EndShaderMode();
+                       WHITE);
+
+        if (enable_post)
+        {
+            EndShaderMode();
+        }
 
         EndDrawing();
     }

@@ -25,6 +25,7 @@ enum TextureId
 {
     TEXID_SPRITES,
     TEXID_TITLE,
+    TEXID_BACKGROUND,
     TEXID_COUNT,
 };
 

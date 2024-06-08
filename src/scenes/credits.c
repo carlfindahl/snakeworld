@@ -39,10 +39,16 @@ void credits_update()
 void credits_draw()
 {
     Vector2 size = MeasureTextEx(*font, "A game by Daali Spill 2024", 24, 0);
-    DrawTextEx(*font, "A game by Daali Spill 2024", (Vector2){300 - size.x / 2.0, 500.0}, 24, 0, WHITE);
+    DrawTextEx(*font, "A game by Daali Spill 2024", (Vector2){300 - size.x / 2.0, 450.0}, 24, 0, WHITE);
+
+    size = MeasureTextEx(*font, "Art by Daali Spill - Background by Midjourney", 16, 0);
+    DrawTextEx(*font, "Art by Daali Spill - Background by Midjourney", (Vector2){300 - size.x / 2.0, 570.0}, 16, 0, LIGHTGRAY);
+
+    size = MeasureTextEx(*font, "Made with Raylib", 16, 0);
+    DrawTextEx(*font, "Made with Raylib", (Vector2){300 - size.x / 2.0, 550.0}, 16, 0, LIGHTGRAY);
 
     size = MeasureTextEx(*font, "Press [ENTER] to return to menu", 16, 0);
-    DrawTextEx(*font, "Press [ENTER] to return to menu", (Vector2){300 - size.x / 2.0, 450.0}, 16, 0, WHITE);
+    DrawTextEx(*font, "Press [ENTER] to return to menu", (Vector2){300 - size.x / 2.0, 420.0}, 16, 0, WHITE);
 
     DrawTextureEx(*title,
                   (Vector2){300 - title->width * 1.25, 180},
