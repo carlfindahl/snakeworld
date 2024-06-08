@@ -48,7 +48,7 @@ void credits_draw()
                   (Vector2){300 - title->width * 1.25, 180},
                   0.0,
                   2.5,
-                  colors[current_color++ % (sizeof(colors) / sizeof(Color))]);
+                  colors[(current_color++ / 2) % (sizeof(colors) / sizeof(Color))]);
 }
 
 void credits_uninit()

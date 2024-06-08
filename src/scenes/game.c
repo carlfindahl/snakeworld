@@ -1,5 +1,6 @@
 #include "scenes/game.h"
 #include "game_math.h"
+#include "kv_store.h"
 #include "message_queue.h"
 #include "resources.h"
 #include "scenes/end_game.h"
@@ -122,6 +123,8 @@ void game_update()
         event.identifier               = GME_PUSH_SCENE;
         event.data.push_scene.scene_fn = get_scene_end_game;
         mq_push(event);
+
+        kv_set_value(KVI_SCORE, game_data->score);
     }
 }
 
@@ -171,14 +174,16 @@ static void game_draw()
     }
 
     // Draw Score
-    DrawTextEx(*game_data->font, TextFormat("Score: %d", game_data->score), (Vector2){600 - 160, 10}, 24, 0.0, LIGHTGRAY);
+    const char* score_text = TextFormat("Score: %d", game_data->score);
+    Vector2 score_size     = MeasureTextEx(*game_data->font, score_text, 24, 0);
+    DrawTextEx(*game_data->font, score_text, (Vector2){600 - score_size.x - 20, 10}, 24, 0.0, LIGHTGRAY);
 
     // Draw info
-    if (game_data->tick_count < 10)
+    if (game_data->tick_count < 15)
     {
         DrawTextEx(*game_data->font, "Use arrow keys to move", (Vector2){20, 600 - 40}, 20, 0.0, LIGHTGRAY);
     }
-    else if (game_data->tick_count < 20)
+    else if (game_data->tick_count < 30)
     {
         DrawTextEx(*game_data->font, "Good luck.", (Vector2){20, 600 - 40}, 20, 0.0, LIGHTGRAY);
     }

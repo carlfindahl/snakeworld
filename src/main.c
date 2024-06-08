@@ -12,13 +12,6 @@
 #include "scenes/scene.h"
 #include "snake.h"
 
-enum PlayState
-{
-    PS_MENU,
-    PS_PLAYING,
-    PS_GAME_OVER,
-};
-
 // Size of each tile
 const int TILE_SIZE = 20;
 
