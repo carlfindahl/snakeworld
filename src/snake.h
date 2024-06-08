@@ -27,6 +27,8 @@ typedef struct Snake
 // Initialize a snake at the given position
 Snake init_snake(uint32_t x, uint32_t y, uint32_t base_length);
 
+void snake_damage(Snake* s);
+
 // Update the snake's position
 void snake_update(Snake* s);
 

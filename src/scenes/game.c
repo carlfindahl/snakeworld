@@ -8,6 +8,7 @@
 #include "snake.h"
 
 #include <math.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -17,6 +18,12 @@
 #define INITIAL_TICK_TIME 1.0f
 #define BASE_GAME_SPEED 0.2f
 #define MAX_LIFE 4
+
+typedef struct Wall
+{
+    uint32_t pos;
+    bool active;
+} Wall;
 
 typedef struct GameData
 {
@@ -29,6 +36,8 @@ typedef struct GameData
     int boost_threshold;
     uint32_t apple;
     Texture2D* sprite_sheet;
+    Wall* walls;
+    uint32_t wall_count;
     Font* font;
 } GameData;
 
@@ -42,9 +51,16 @@ static void on_snake_damaged(void* _, struct GameEvent* event)
     }
 }
 
+void spawn_wall(uint32_t pos)
+{
+    game_data->walls[game_data->wall_count++] = (Wall){pos, false};
+}
+
 static void game_init()
 {
     game_data                  = malloc(sizeof(GameData));
+    game_data->walls           = calloc(30 * 30, sizeof(Wall));
+    game_data->wall_count      = 0;
     game_data->apple           = vec2(10, 10);
     game_data->snake           = init_snake(13, 15, INITIAL_SNAKE_LENGTH);
     game_data->score           = 0;
@@ -86,8 +102,32 @@ void game_update()
     {
         game_data->tick_count++;
 
+        // Update walls
+        if (game_data->tick_count % 60 == 0)
+        {
+            for (int i = 0; i < game_data->wall_count; i++)
+            {
+                game_data->walls[i].active = !game_data->walls[i].active;
+            }
+
+            spawn_wall(vec2(GetRandomValue(1, 28), GetRandomValue(1, 28)));
+            spawn_wall(vec2(GetRandomValue(1, 28), GetRandomValue(1, 28)));
+            spawn_wall(vec2(GetRandomValue(1, 28), GetRandomValue(1, 28)));
+            spawn_wall(vec2(GetRandomValue(1, 28), GetRandomValue(1, 28)));
+        }
+
         snake_update(s);
         s->previous_direction = s->direction;
+
+        // Check for collisions
+        for (int i = 0; i < game_data->wall_count; i++)
+        {
+            if (s->positions[0] == game_data->walls[i].pos && game_data->walls[i].active)
+            {
+                game_data->walls[i].active = false;
+                snake_damage(s);
+            }
+        }
 
         // Eating food
         if (s->positions[0] == game_data->apple)
@@ -173,6 +213,19 @@ static void game_draw()
                        WHITE);
     }
 
+    // Draw Walls
+    for (int i = 0; i < game_data->wall_count; i++)
+    {
+        int alpha   = game_data->walls[i].active ? 255 : 48;
+        Color color = (Color){255, 255, 255, alpha};
+        DrawTexturePro(*game_data->sprite_sheet,
+                       resources_get_sprite_rect(SR_WALL),
+                       (Rectangle){vec2_x(game_data->walls[i].pos) * 20, vec2_y(game_data->walls[i].pos) * 20, 20, 20},
+                       (Vector2){0, 0},
+                       0,
+                       color);
+    }
+
     // Draw Score
     const char* score_text = TextFormat("Score: %d", game_data->score);
     Vector2 score_size     = MeasureTextEx(*game_data->font, score_text, 24, 0);
@@ -200,6 +253,7 @@ static void game_uninit()
 {
     mq_unlisten(on_snake_damaged);
 
+    free(game_data->walls);
     free(game_data);
     game_data = NULL;
 }

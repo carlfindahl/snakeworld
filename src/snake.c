@@ -58,16 +58,21 @@ void snake_update(Snake* s)
 
         if (damaged)
         {
-            --s->life;
-            s->invulnerable = 4;
-
-            // Send damage event
-            struct GameEvent event              = {.identifier = GME_SNAKE_DAMAGED};
-            event.data.snake_damaged.damage     = 1;
-            event.data.snake_damaged.new_health = s->life;
-            mq_push(event);
+            snake_damage(s);
         }
     }
+}
+
+void snake_damage(Snake* s)
+{
+    --s->life;
+    s->invulnerable = 4;
+
+    // Send damage event
+    struct GameEvent event              = {.identifier = GME_SNAKE_DAMAGED};
+    event.data.snake_damaged.damage     = 1;
+    event.data.snake_damaged.new_health = s->life;
+    mq_push(event);
 }
 
 void snake_increment(Snake* s)

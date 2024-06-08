@@ -30,6 +30,7 @@ void resources_load()
         sprite_rects[SR_HEART]       = (Rectangle){16, 16, 16, 16};
         sprite_rects[SR_TOMBSTONE]   = (Rectangle){0, 32, 16, 16};
         sprite_rects[SR_EMPTY_HEART] = (Rectangle){16, 32, 16, 16};
+        sprite_rects[SR_WALL]        = (Rectangle){32, 0, 16, 16};
 
         initialized = true;
     }
