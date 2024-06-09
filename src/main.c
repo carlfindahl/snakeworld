@@ -19,6 +19,9 @@ const int TILE_SIZE = 20;
 // Size of the render texture that is blitted to the full screen
 const int RENDER_SIZE = 600;
 
+// Highest coordinate on the map in either direction (RENDER_SIZE / TILE_SIZE)
+const int MAP_SIZE = RENDER_SIZE / TILE_SIZE;
+
 struct SceneCommandContext
 {
     SceneManager* scene_manager;

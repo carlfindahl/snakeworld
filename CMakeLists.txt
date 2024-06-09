@@ -33,17 +33,18 @@ target_include_directories(snakeworld PRIVATE
 )
 
 target_sources(snakeworld PRIVATE
-    ${CMAKE_SOURCE_DIR}/src/main.c
-    ${CMAKE_SOURCE_DIR}/src/snake.c
+    ${CMAKE_SOURCE_DIR}/src/enemy.c
     ${CMAKE_SOURCE_DIR}/src/game_math.c
-    ${CMAKE_SOURCE_DIR}/src/resources.c
     ${CMAKE_SOURCE_DIR}/src/kv_store.c
+    ${CMAKE_SOURCE_DIR}/src/main.c
     ${CMAKE_SOURCE_DIR}/src/message_queue.c
-    ${CMAKE_SOURCE_DIR}/src/scenes/menu.c
-    ${CMAKE_SOURCE_DIR}/src/scenes/game.c
-    ${CMAKE_SOURCE_DIR}/src/scenes/scene.c
+    ${CMAKE_SOURCE_DIR}/src/resources.c
+    ${CMAKE_SOURCE_DIR}/src/snake.c
     ${CMAKE_SOURCE_DIR}/src/scenes/credits.c
     ${CMAKE_SOURCE_DIR}/src/scenes/end_game.c
+    ${CMAKE_SOURCE_DIR}/src/scenes/game.c
+    ${CMAKE_SOURCE_DIR}/src/scenes/menu.c
+    ${CMAKE_SOURCE_DIR}/src/scenes/scene.c
 )
 
 target_link_libraries(snakeworld PRIVATE

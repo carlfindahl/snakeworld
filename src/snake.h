@@ -1,17 +1,11 @@
 #pragma once
 
+#include "game_math.h"
+
 #include <stdint.h>
 #include <stdio.h>
 
 #define SNAKE_MAX_LENGTH 128
-
-enum Direction
-{
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-};
 
 typedef struct Snake
 {

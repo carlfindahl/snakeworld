@@ -1,4 +1,5 @@
 #include "scenes/game.h"
+#include "enemy.h"
 #include "game_math.h"
 #include "kv_store.h"
 #include "message_queue.h"
@@ -18,6 +19,7 @@
 #define INITIAL_TICK_TIME 1.0f
 #define BASE_GAME_SPEED 0.2f
 #define MAX_LIFE 4
+#define ENEMY_COUNT 4
 
 typedef struct Wall
 {
@@ -36,8 +38,12 @@ typedef struct GameData
     int boost_threshold;
     uint32_t apple;
     Texture2D* sprite_sheet;
+
     Wall* walls;
     uint32_t wall_count;
+
+    Enemy enemies[ENEMY_COUNT];
+
     Font* font;
 } GameData;
 
@@ -58,7 +64,7 @@ void spawn_wall(uint32_t pos)
 
 static void game_init()
 {
-    game_data                  = malloc(sizeof(GameData));
+    game_data                  = calloc(1, sizeof(GameData));
     game_data->walls           = calloc(30 * 30, sizeof(Wall));
     game_data->wall_count      = 0;
     game_data->apple           = vec2(10, 10);

@@ -18,6 +18,7 @@ enum SpriteRect
     SR_EMPTY_HEART,
     SR_TOMBSTONE,
     SR_WALL,
+    SR_ENEMY,
     SR_COUNT,
 };
 
