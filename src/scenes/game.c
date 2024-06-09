@@ -138,6 +138,15 @@ void game_update()
             enemy_spawn(&game_data->enemies[game_data->enemy_count++], vec2(GetRandomValue(1, 28), GetRandomValue(1, 28)));
         }
 
+        // Heal player
+        if (game_data->tick_count % 100 == 0)
+        {
+            if (s->life < MAX_LIFE)
+            {
+                s->life++;
+            }
+        }
+
         snake_update(s);
         for (int i = 0; i < ENEMY_COUNT; i++)
         {

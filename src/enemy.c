@@ -20,10 +20,10 @@ void enemy_update(Enemy* e)
     {
         switch (e->direction)
         {
-            case UP: e->pos -= vec2(0, 1); break;
-            case DOWN: e->pos += vec2(0, 1); break;
-            case LEFT: e->pos -= vec2(1, 0); break;
-            case RIGHT: e->pos += vec2(1, 0); break;
+            case UP: e->pos = vec2(vec2_x(e->pos), vec2_y(e->pos) - 1); break;
+            case DOWN: e->pos = vec2(vec2_x(e->pos), vec2_y(e->pos) + 1); break;
+            case LEFT: e->pos = vec2(vec2_x(e->pos) - 1, vec2_y(e->pos)); break;
+            case RIGHT: e->pos = vec2(vec2_x(e->pos) + 1, vec2_y(e->pos)); break;
             default: break;
         }
 
