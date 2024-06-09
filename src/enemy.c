@@ -2,18 +2,16 @@
 
 #include <raylib.h>
 
-void enemy_spawn(Enemy** e, uint32_t pos)
+void enemy_spawn(Enemy* e, uint32_t pos)
 {
-    Enemy* enemy     = *e;
-    enemy->pos       = pos;
-    enemy->direction = GetRandomValue(0, DIR_COUNT);
-    enemy->active    = true;
+    e->pos       = pos;
+    e->direction = GetRandomValue(0, DIR_COUNT);
+    e->active    = true;
 }
 
-void enemy_despawn(Enemy** e)
+void enemy_despawn(Enemy* e)
 {
-    Enemy* enemy  = *e;
-    enemy->active = false;
+    e->active = false;
 }
 
 void enemy_update(Enemy* e)
@@ -27,6 +25,23 @@ void enemy_update(Enemy* e)
             case LEFT: e->pos -= vec2(1, 0); break;
             case RIGHT: e->pos += vec2(1, 0); break;
             default: break;
+        }
+
+        if (vec2_x(e->pos) == 0)
+        {
+            e->pos = vec2(MAP_SIZE, vec2_y(e->pos));
+        }
+        else if (vec2_x(e->pos) > MAP_SIZE)
+        {
+            e->pos = vec2(0, vec2_y(e->pos));
+        }
+        else if (vec2_y(e->pos) == 0)
+        {
+            e->pos = vec2(vec2_x(e->pos), MAP_SIZE);
+        }
+        else if (vec2_y(e->pos) > MAP_SIZE)
+        {
+            e->pos = vec2(vec2_x(e->pos), 0);
         }
     }
 }

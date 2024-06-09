@@ -43,6 +43,7 @@ typedef struct GameData
     uint32_t wall_count;
 
     Enemy enemies[ENEMY_COUNT];
+    uint32_t enemy_count;
 
     Font* font;
 } GameData;
@@ -66,11 +67,8 @@ static void game_init()
 {
     game_data                  = calloc(1, sizeof(GameData));
     game_data->walls           = calloc(30 * 30, sizeof(Wall));
-    game_data->wall_count      = 0;
     game_data->apple           = vec2(10, 10);
     game_data->snake           = init_snake(13, 15, INITIAL_SNAKE_LENGTH);
-    game_data->score           = 0;
-    game_data->tick_count      = 0;
     game_data->boost           = 1.0f;
     game_data->boost_threshold = 5;
     game_data->tick_timer      = INITIAL_TICK_TIME;
@@ -134,7 +132,18 @@ void game_update()
             }
         }
 
+        // Spawn enemies
+        if (game_data->tick_count % 150 == 0 && game_data->enemy_count < ENEMY_COUNT)
+        {
+            enemy_spawn(&game_data->enemies[game_data->enemy_count++], vec2(GetRandomValue(1, 28), GetRandomValue(1, 28)));
+        }
+
         snake_update(s);
+        for (int i = 0; i < ENEMY_COUNT; i++)
+        {
+            enemy_update(&game_data->enemies[i]);
+        }
+
         s->previous_direction = s->direction;
 
         // Check for collisions
@@ -144,6 +153,15 @@ void game_update()
             {
                 game_data->walls[i].active = false;
                 snake_damage(s);
+            }
+        }
+
+        for (int i = 0; i < ENEMY_COUNT; i++)
+        {
+            if (s->positions[0] == game_data->enemies[i].pos && game_data->enemies[i].active)
+            {
+                snake_damage(s);
+                enemy_despawn(&game_data->enemies[i]);
             }
         }
 
@@ -229,6 +247,20 @@ static void game_draw()
                        (Vector2){0, 0},
                        0,
                        WHITE);
+    }
+
+    // Draw Enemies
+    for (int i = 0; i < ENEMY_COUNT; i++)
+    {
+        if (game_data->enemies[i].active)
+        {
+            DrawTexturePro(*game_data->sprite_sheet,
+                           resources_get_sprite_rect(SR_ENEMY),
+                           vec2_to_tile_rect(game_data->enemies[i].pos),
+                           (Vector2){0, 0},
+                           0,
+                           WHITE);
+        }
     }
 
     // Draw Walls
