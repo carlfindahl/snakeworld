@@ -199,7 +199,7 @@ static void game_draw()
         Rectangle rect = resources_get_sprite_rect((i == 0) ? SR_SNAKE_HEAD : SR_SNAKE_BODY);
         DrawTexturePro(*game_data->sprite_sheet,
                        rect,
-                       (Rectangle){snake_x(s, i) * 20, snake_y(s, i) * 20, 20, 20},
+                       (Rectangle){snake_x(s, i) * TILE_SIZE, snake_y(s, i) * TILE_SIZE, TILE_SIZE, TILE_SIZE},
                        (Vector2){0, 0},
                        0,
                        color);
@@ -208,7 +208,7 @@ static void game_draw()
     // Draw the food
     DrawTexturePro(*game_data->sprite_sheet,
                    resources_get_sprite_rect(SR_APPLE),
-                   (Rectangle){vec2_x(game_data->apple) * 20, vec2_y(game_data->apple) * 20, 20, 20},
+                   (Rectangle){vec2_x(game_data->apple) * TILE_SIZE, vec2_y(game_data->apple) * TILE_SIZE, TILE_SIZE, TILE_SIZE},
                    (Vector2){0, 0},
                    0,
                    WHITE);
@@ -232,7 +232,10 @@ static void game_draw()
         Color color = (Color){255, 255, 255, alpha};
         DrawTexturePro(*game_data->sprite_sheet,
                        resources_get_sprite_rect(SR_WALL),
-                       (Rectangle){vec2_x(game_data->walls[i].pos) * 20, vec2_y(game_data->walls[i].pos) * 20, 20, 20},
+                       (Rectangle){vec2_x(game_data->walls[i].pos) * TILE_SIZE,
+                                   vec2_y(game_data->walls[i].pos) * TILE_SIZE,
+                                   TILE_SIZE,
+                                   TILE_SIZE},
                        (Vector2){0, 0},
                        0,
                        color);
@@ -241,23 +244,23 @@ static void game_draw()
     // Draw Score
     const char* score_text = TextFormat("Score: %d", game_data->score);
     Vector2 score_size     = MeasureTextEx(*game_data->font, score_text, 24, 0);
-    DrawTextEx(*game_data->font, score_text, (Vector2){600 - score_size.x - 20, 10}, 24, 0.0, LIGHTGRAY);
+    DrawTextEx(*game_data->font, score_text, (Vector2){RENDER_SIZE - score_size.x - 20, 10}, 24, 0.0, LIGHTGRAY);
 
     // Draw info
     if (game_data->tick_count < 15)
     {
-        DrawTextEx(*game_data->font, "Use arrow keys to move", (Vector2){20, 600 - 40}, 20, 0.0, LIGHTGRAY);
+        DrawTextEx(*game_data->font, "Use arrow keys to move", (Vector2){20, RENDER_SIZE - 40}, 20, 0.0, LIGHTGRAY);
     }
     else if (game_data->tick_count < 30)
     {
-        DrawTextEx(*game_data->font, "Good luck.", (Vector2){20, 600 - 40}, 20, 0.0, LIGHTGRAY);
+        DrawTextEx(*game_data->font, "Good luck.", (Vector2){20, RENDER_SIZE - 40}, 20, 0.0, LIGHTGRAY);
     }
 
     if (game_data->boost > 1.0)
     {
         Color color = game_data->boost < 1.5 ? YELLOW : RED;
         color.a     = 100;
-        DrawTextEx(*game_data->font, TextFormat("%.2fx!", game_data->boost), (Vector2){20, 600 - 52}, 32, 0.0, color);
+        DrawTextEx(*game_data->font, TextFormat("%.2fx!", game_data->boost), (Vector2){20, RENDER_SIZE - 52}, 32, 0.0, color);
     }
 }
 
