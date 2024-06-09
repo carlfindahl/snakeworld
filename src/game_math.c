@@ -14,3 +14,8 @@ uint32_t vec2_y(uint32_t v)
 {
     return v >> 16;
 }
+
+Rectangle vec2_to_tile_rect(uint32_t v)
+{
+    return (Rectangle){(float)vec2_x(v) * TILE_SIZE, (float)vec2_y(v) * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+}

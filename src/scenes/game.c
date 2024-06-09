@@ -199,7 +199,7 @@ static void game_draw()
         Rectangle rect = resources_get_sprite_rect((i == 0) ? SR_SNAKE_HEAD : SR_SNAKE_BODY);
         DrawTexturePro(*game_data->sprite_sheet,
                        rect,
-                       (Rectangle){snake_x(s, i) * TILE_SIZE, snake_y(s, i) * TILE_SIZE, TILE_SIZE, TILE_SIZE},
+                       vec2_to_tile_rect(vec2(snake_x(s, i), snake_y(s, i))),
                        (Vector2){0, 0},
                        0,
                        color);
@@ -208,7 +208,7 @@ static void game_draw()
     // Draw the food
     DrawTexturePro(*game_data->sprite_sheet,
                    resources_get_sprite_rect(SR_APPLE),
-                   (Rectangle){vec2_x(game_data->apple) * TILE_SIZE, vec2_y(game_data->apple) * TILE_SIZE, TILE_SIZE, TILE_SIZE},
+                   vec2_to_tile_rect(game_data->apple),
                    (Vector2){0, 0},
                    0,
                    WHITE);
@@ -232,10 +232,7 @@ static void game_draw()
         Color color = (Color){255, 255, 255, alpha};
         DrawTexturePro(*game_data->sprite_sheet,
                        resources_get_sprite_rect(SR_WALL),
-                       (Rectangle){vec2_x(game_data->walls[i].pos) * TILE_SIZE,
-                                   vec2_y(game_data->walls[i].pos) * TILE_SIZE,
-                                   TILE_SIZE,
-                                   TILE_SIZE},
+                       vec2_to_tile_rect(game_data->walls[i].pos),
                        (Vector2){0, 0},
                        0,
                        color);
